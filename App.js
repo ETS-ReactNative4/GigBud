@@ -5,6 +5,7 @@ import FavoritesScreen from 'screens/Favorites/FavoritesScreen';
 import SearchResultScreen from 'screens/SearchResult/SearchResultScreen';
 import CreatePlaylistScreen from 'screens/CreatePlaylist/CreatePlaylistScreen';
 import firebase from 'utils/firebase';
+import Store from 'utils/Store';
 
 import React from 'react';
 import { AppRegistry, AsyncStorage } from 'react-native';
@@ -12,7 +13,7 @@ import {
     createSwitchNavigator, createStackNavigator,
     createBottomTabNavigator, createAppContainer
 } from 'react-navigation';
-import Expo from 'expo';
+import { SecureStore } from 'expo';
 
 
 class InitialCheckScreen extends React.Component {
@@ -21,35 +22,47 @@ class InitialCheckScreen extends React.Component {
         this.checkIfLaunched()
     }
 
-    checkIfLaunched = async () => {
+    checkIfLaunched = () => {
         AsyncStorage.getItem('alreadyLaunched').then(value => {
             console.log(value);
-            /// value = 'false'
+            value = 'false'
             if(value === 'true') {
-                this.props.navigation.navigate('App');
+                 this.props.navigation.navigate('App');
             } else {
-                // Load api keys from firebase
-                var db = firebase.firestore();
-                var settings = {timestampsInSnapshots: true};
-                db.settings(settings);
-                var setlistRef = db.collection('api_keys').doc('setlist_fm');
-                setlistRef.get().then(function(doc) {
-                    if (doc.exists) {
-                        console.log('setlist_fm data: ' + doc.data());
-                        // Look at console to see how it comes back
-                        // Store with SecureStore
-                        // Expo.SecureStore.setItemAsync('setlist_fm_key', key);
-                    } else {
-                        console.log('no setlist_fm doc');
-                    }
-                }).catch(function(error) {
-                    console.log('error getting setlist_fm doc: ', error);
-                });
-                // ** Repeat for spotify and apple music
-                // Navigate to Auth screen
-                AsyncStorage.setItem('alreadyLaunched', 'true');
-                this.props.navigation.navigate('Auth');
+                this.getAndStoreApiKey('setlist_fm')
+                    // .then(this.getAndStoreApiKey('spotify'))
+                    // .then(this.getAndStoreApiKey('apple_music'))
+                    .then(() => {
+                        AsyncStorage.setItem('alreadyLaunched', 'true');
+                        this.props.navigation.navigate('Auth');
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                        throw error;
+                    });
             }
+        });
+    }
+
+    getAndStoreApiKey = async (keyName) => {
+        var db = firebase.firestore();
+        var setlistRef = db.collection('api_keys').doc(keyName);
+        setlistRef.get().then((doc) => {
+            if(doc.exists) {
+                let data = doc.data();
+                let key = data.key;
+                var storeKey = keyName + '_api_key';
+                SecureStore.setItemAsync(storeKey, key)
+                    .catch((error) => {
+                        console.log(error);
+                        throw error;
+                    });
+            } else {
+                throw 'Error getting ' + keyName + ' doc.';
+            }
+        }).catch((error) => {
+            console.log(error);
+            throw error;
         });
     }
 

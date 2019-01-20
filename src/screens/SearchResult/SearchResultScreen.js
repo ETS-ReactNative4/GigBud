@@ -3,6 +3,7 @@ import { View, Image, Text, Button } from 'react-native';
 import { SecureStore } from 'expo';
 
 import constants from 'library/utils/constants';
+import { UrlFormat } from 'library/utils/functions';
 
 export default class SearchResultsScreen extends Component {
     constructor(props) {
@@ -14,37 +15,41 @@ export default class SearchResultsScreen extends Component {
         }
     }
 
-    componentWillMount() {
-        // Get search val
-        var searchVal = this.props.navigation.getParam('searchValue', null);
-        if(searchVal === null) {
-            this.setState({
-                loading: false,
-                error: true,
-                data: null
-            });
-            this.props.navigation.navigate('Error');
-        } else {
-            // Get setlist.fm api key from storage
-            let api_key = await SecureStore.getItemAsync(constants.local_setlist_fm);
+    componentDidMount() {
+        this.search();
 
-            // Search setlist.fm and update state
-
-        }
+        // // Get search val
+        // var searchVal = this.props.navigation.getParam('searchValue', null);
+        // if(searchVal === null) {
+        //     this.setState({
+        //         loading: false,
+        //         error: true,
+        //         data: null
+        //     });
+        //     this.props.navigation.navigate('Error');
+        // } else {
+        //     // Get setlist.fm api key from storage
+        //
+        //     // Search setlist.fm and update state
+        //
+        // }
     }
 
-    // search = async() => {
-    //     const val = this.props.navigation.getParam('searchValue', null);
-    //     console.log(val);
-    //     if(val === null) {
-    //         this.props.navigation.navigate('Error');
-    //     } else {
-    //         this.setState({
-    //             searchComplete: true,
-    //             searchVal: JSON.stringify(val)
-    //         });
-    //     }
-    // }
+    search = async () => {
+        const searchVal = this.props.navigation.getParam('searchValue', null);
+        if(searchVal === null) {
+            this.props.navigation.navigate('Error');
+        } else {
+            let api_key = await SecureStore.getItemAsync(constants.local_setlist_fm);
+            console.log(UrlFormat(constants.setlist_fm_search_artists, searchVal));
+
+
+            // this.setState({
+            //     searchComplete: true,
+            //     searchVal: JSON.stringify(val)
+            // });
+        }
+    }
 
     render() {
         if(this.state.loading) {

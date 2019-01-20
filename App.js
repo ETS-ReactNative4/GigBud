@@ -22,14 +22,14 @@ class InitialCheckScreen extends React.Component {
         this.checkIfLaunched()
     }
 
-    checkIfLaunched = () => {
+    checkIfLaunched = async () => {
         AsyncStorage.getItem(constants.first_launch).then((value) => {
             // console.log(value);
             value = 'true'
             if(value === 'false') {
                  this.props.navigation.navigate('App');
             } else {
-                this.getAndStoreApiKey(constants.firebase_setlist_fm);
+                this.getAndStoreApiKey(constants.firebase_setlist_fm)
                     // .then(this.getAndStoreApiKey(constants.firebase_spotify))
                     // .then(this.getAndStoreApiKey(constants.firebase_apple_music))
                     .then(() => {

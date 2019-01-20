@@ -5,7 +5,7 @@ import FavoritesScreen from 'screens/Favorites/FavoritesScreen';
 import SearchResultScreen from 'screens/SearchResult/SearchResultScreen';
 import CreatePlaylistScreen from 'screens/CreatePlaylist/CreatePlaylistScreen';
 import firebase from 'utils/firebase';
-import Store from 'utils/Store';
+import constants from 'library/utils/constants';
 
 import React from 'react';
 import { AppRegistry, AsyncStorage } from 'react-native';
@@ -23,17 +23,17 @@ class InitialCheckScreen extends React.Component {
     }
 
     checkIfLaunched = () => {
-        AsyncStorage.getItem('alreadyLaunched').then(value => {
-            console.log(value);
-            value = 'false'
-            if(value === 'true') {
+        AsyncStorage.getItem(constants.first_launch).then((value) => {
+            // console.log(value);
+            value = 'true'
+            if(value === 'false') {
                  this.props.navigation.navigate('App');
             } else {
-                this.getAndStoreApiKey('setlist_fm')
-                    // .then(this.getAndStoreApiKey('spotify'))
-                    // .then(this.getAndStoreApiKey('apple_music'))
+                this.getAndStoreApiKey(constants.firebase_setlist_fm);
+                    // .then(this.getAndStoreApiKey(constants.firebase_spotify))
+                    // .then(this.getAndStoreApiKey(constants.firebase_apple_music))
                     .then(() => {
-                        AsyncStorage.setItem('alreadyLaunched', 'true');
+                        AsyncStorage.setItem(constants.first_launch, 'false');
                         this.props.navigation.navigate('Auth');
                     })
                     .catch((error) => {
@@ -46,7 +46,7 @@ class InitialCheckScreen extends React.Component {
 
     getAndStoreApiKey = async (keyName) => {
         var db = firebase.firestore();
-        var setlistRef = db.collection('api_keys').doc(keyName);
+        var setlistRef = db.collection(constants.firebase_table).doc(keyName);
         setlistRef.get().then((doc) => {
             if(doc.exists) {
                 let data = doc.data();

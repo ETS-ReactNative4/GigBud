@@ -6,22 +6,24 @@ import images from 'res/images';
 import colors from 'res/colors';
 import strings from 'res/strings';
 import styles from './styles';
+import constants from 'library/utils/constants';
 
 export default class AuthScreen extends Component {
     constructor() {
         super();
-        SecureStore.getItemAsync('setlist_fm_api_key')
-            .then((key) => {
-                console.log(key);
-            });
-        this.state = {streamingServiceChosen: null}
+        // SecureStore.getItemAsync('setlist_fm_api_key')
+        //     .then((key) => {
+        //         console.log(key);
+        //     });
+        // this.state = {streamingServiceChosen: null}
     }
 
     setStreamingService = async (service) => {
-        AsyncStorage.setItem('streamingService', service)
+        AsyncStorage.setItem(constants.local_streaming_service, service)
                     .then(() => {
-                        this.setState({streamingServiceChosen: true});
-                        // ** this is not a valid function
+                        // Authenticate user and save refresh key
+
+                        // this.setState({streamingServiceChosen: true});
                         this.props.navigation.navigate('App');
                     })
                     .catch((error) => {
@@ -31,7 +33,7 @@ export default class AuthScreen extends Component {
     }
 
     render() {
-        const {navigate} = this.props.navigation;
+        // const {navigate} = this.props.navigation;
         // if(this.state.streamingServiceChosen) {
         //     this.props.navigation.navigate('App');
         //     return null;

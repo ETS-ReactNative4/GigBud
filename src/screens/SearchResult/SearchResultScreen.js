@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { ScrollView, View, Image, Text, Button } from 'react-native';
+import { FlatList, ScrollView, View, Image, Text, Button } from 'react-native';
 import { SecureStore } from 'expo';
 
 import SearchResultTicketButton from 'library/components/SearchResultTicketButton';
@@ -12,7 +12,7 @@ export default class SearchResultsScreen extends Component {
         super(props);
         this.state = {
             loading: true,
-            data: null,
+            data: [],
             pageCounter: 1
         }
     }
@@ -39,7 +39,12 @@ export default class SearchResultsScreen extends Component {
         let api_key = await SecureStore.getItemAsync(constants.local_setlist_fm);
         var url = UrlFormat(constants.setlist_fm_search_setlists, mbid, this.state.pageCounter);
         let data = await this.doFetch(url, api_key);
-        this.setState({loading: false, data: data});
+        console.log(data);
+        if(data != null) {
+            let oldData = this.state.data;
+            data.setlist.forEach((setlist) => oldData.push(setlist));
+            this.setState({loading: false, data: oldData});
+        }
     }
 
     doFetch = async (url, api_key) => {
@@ -57,7 +62,7 @@ export default class SearchResultsScreen extends Component {
         })
         .then(([code, data]) => {
             if(code === 200) {
-                console.log(JSON.stringify(data, null, 2));
+                // console.log(JSON.stringify(data, null, 2));
                 return data;
             } else if(code === 404) {
                 this.setState({isLoading: false, status: 404});
@@ -75,26 +80,23 @@ export default class SearchResultsScreen extends Component {
             return null;
         } else {
             return (
-                <ScrollView style={styles.parent}>
-                    {this._renderSetlists()}
-                </ScrollView>
+                <FlatList
+                    style={styles.parent}
+                    data={this.state.data}
+                    onEndReachedThreshold={0.5}
+                    onEndReached={() => {
+                        this.loadMore()
+                    }}
+                    renderItem={({item}) => <SearchResultTicketButton data={item}/>}
+                    keyExtractor={item => item.id}
+                />
             )
         }
     }
 
-    _renderSetlists() {
-        let buttons = [];
-        let data = this.state.data;
-
-        for(var i = 0; i < data.setlist.length; i++) {
-            let setlist = data.setlist[i];
-            buttons.push(
-                <SearchResultTicketButton
-                    key={'row-' + i}
-                    data={setlist}
-                />
-            );
-        }
-        return buttons;
+    loadMore = async () => {
+        this.setState({pageCounter: this.state.pageCounter+1});
+        this.searchForSetlist(this.state.data[0].artist.mbid);
     }
+
 }

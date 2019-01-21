@@ -19,7 +19,7 @@ export default class AuthScreen extends Component {
                         // Authenticate user and save refresh key
 
                         // this.setState({streamingServiceChosen: true});
-                        AsyncStorage.setItem(constants.first_launch, 'false').then(() = > {
+                        AsyncStorage.setItem(constants.first_launch, 'false').then(() => {
                             this.props.navigation.navigate('App');
                         })
                     })

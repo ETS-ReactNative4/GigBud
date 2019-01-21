@@ -33,7 +33,6 @@ class InitialCheckScreen extends React.Component {
                     // .then(this.getAndStoreApiKey(constants.firebase_spotify))
                     // .then(this.getAndStoreApiKey(constants.firebase_apple_music))
                     .then(() => {
-                        AsyncStorage.setItem(constants.first_launch, 'false');
                         this.props.navigation.navigate('Auth');
                     })
                     .catch((error) => {

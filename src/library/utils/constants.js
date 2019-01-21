@@ -10,6 +10,7 @@ const constants = {
     local_streaming_service: 'streaming_service',
     setlist_fm_search_artists: 'https://api.setlist.fm/rest/1.0/search/artists?artistName={0}&p=1&sort=sortName',
     setlist_fm_search_setlists: 'https://api.setlist.fm/rest/1.0/artist/{0}/setlists?p={1}',
+
 }
 
 export default constants;

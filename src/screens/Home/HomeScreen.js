@@ -5,7 +5,6 @@ import {
 import {createDrawerNavigator, createAppContainer} from 'react-navigation';
 
 
-import TicketButton from 'components/TicketButton';
 import SearchInput from 'components/SearchInput';
 import styles from './styles';
 
@@ -20,14 +19,7 @@ export default class HomeScreen extends Component {
         return (
             <View style={styles.rootContainer}>
                 <SearchInput />
-                <TicketButton
-                    band='The wonder years'
-                    location='RVA'
-                    venue='canal club'
-                    date='02 feb 2019'
-                    songs='17'
-                    onPress={() => console.log('touched')}
-                />
+
             </View>
         )
     }

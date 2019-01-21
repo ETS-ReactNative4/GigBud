@@ -11,11 +11,6 @@ import constants from 'library/utils/constants';
 export default class AuthScreen extends Component {
     constructor() {
         super();
-        // SecureStore.getItemAsync('setlist_fm_api_key')
-        //     .then((key) => {
-        //         console.log(key);
-        //     });
-        // this.state = {streamingServiceChosen: null}
     }
 
     setStreamingService = async (service) => {
@@ -33,31 +28,25 @@ export default class AuthScreen extends Component {
     }
 
     render() {
-        // const {navigate} = this.props.navigation;
-        // if(this.state.streamingServiceChosen) {
-        //     this.props.navigation.navigate('App');
-        //     return null;
-        // } else {
-            return (
-                <View style={styles.rootContainer}>
-                    <LinearGradient
-                        colors={[colors.black, colors.navyblue]}
-                        style={styles.gradientContainer}>
-                        <Image
-                            source={images.turnover}
-                            style={styles.image}
-                        />
-                        <Button
-                            title={strings.spotify}
-                            onPress={() => {this.setStreamingService('spotify')}}
-                        />
-                        <Button
-                            title={strings.appleMusic}
-                            onPress={() => {this.setStreamingService('apple_music')}}
-                        />
-                    </LinearGradient>
-                </View>
-            )
-        // }
+        return (
+            <View style={styles.rootContainer}>
+                <LinearGradient
+                    colors={[colors.black, colors.navyblue]}
+                    style={styles.gradientContainer}>
+                    <Image
+                        source={images.turnover}
+                        style={styles.image}
+                    />
+                    <Button
+                        title={strings.spotify}
+                        onPress={() => {this.setStreamingService('spotify')}}
+                    />
+                    <Button
+                        title={strings.appleMusic}
+                        onPress={() => {this.setStreamingService('apple_music')}}
+                    />
+                </LinearGradient>
+            </View>
+        )
     }
 }

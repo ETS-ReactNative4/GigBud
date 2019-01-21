@@ -6,11 +6,7 @@ export default class CreatePlaylistScreen extends Component {
         const {navigate} = this.props.navigation;
         return (
             <View>
-                <Text>Create Playlist screen</Text>
-                <Button
-                    title="Go to home"
-                    onPress={() => navigate('Home')}
-                />
+                <Text>{JSON.stringify(this.props.navigation.getParam('setlistData'))}</Text>
             </View>
         );
     }

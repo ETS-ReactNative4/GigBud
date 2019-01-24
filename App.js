@@ -17,8 +17,8 @@ import { SecureStore } from 'expo';
 
 
 class InitialCheckScreen extends React.Component {
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.checkIfLaunched()
     }
 

@@ -27,8 +27,7 @@ export default class SearchResultsScreen extends Component {
             this.props.navigation.navigate('Error');
         } else {
             let api_key = await SecureStore.getItemAsync(constants.local_setlist_fm);
-            searchVal = searchVal.trim().replace(' ', '%20');
-            var url = UrlFormat(constants.setlist_fm_search_artists, searchVal);
+            var url = UrlFormat(constants.setlist_fm_search_artists, encodeURIComponent(searchVal));
             console.log(url);
             let data = await this.doFetch(url, api_key);
             this.searchForSetlist(data.artist[0].mbid);
@@ -39,7 +38,6 @@ export default class SearchResultsScreen extends Component {
         let api_key = await SecureStore.getItemAsync(constants.local_setlist_fm);
         var url = UrlFormat(constants.setlist_fm_search_setlists, mbid, this.state.pageCounter);
         let data = await this.doFetch(url, api_key);
-        console.log(data);
         if(data != null) {
             let oldData = this.state.data;
             data.setlist.forEach((setlist) => oldData.push(setlist));

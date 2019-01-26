@@ -1,5 +1,6 @@
 import { AuthSession } from 'expo';
-import { EncodeBase64 } from 'library/utils/functions';
+import { EncodeBase64, UrlFormat } from 'library/utils/functions';
+import constants from 'library/utils/constants';
 
 async function AuthenticateUser(id, secret, scopes) {
     let redirectUrl = AuthSession.getRedirectUrl();
@@ -103,10 +104,71 @@ async function RequestTokenFromRefresh(refreshToken, id, secret) {
     })
 }
 
+async function SearchArtist(authToken, artist) {
+    let url = UrlFormat(constants.spotify_search_artists, encodeURIComponent(artist));
+    return fetch(url, {
+        method: 'GET',
+        headers: {
+            'Authorization': 'Bearer ' + authToken
+        }
+    })
+    .then((response) => response.json())
+    .then((responseJson) => {
+        return responseJson;
+    })
+}
+
+async function GetAlbumsFromArtist(authToken, artistID) {
+    let url = UrlFormat(constants.spotify_get_albums, artistID);
+    return fetch(url, {
+        method: 'GET',
+        headers: {
+            'Authorization': 'Bearer ' + authToken
+        }
+    })
+    .then((response) => response.json())
+    .then((responseJson) => {
+        var albums = [];
+        for(var item in responseJson.items) {
+            albums.push({
+                name: responseJson.items[item].name,
+                id: responseJson.items[item].id
+            })
+        }
+        return albums;
+    })
+    .catch((error) => {console.error(error)})
+}
+
+async function GetTracksFromAlbum(authToken, albumID) {
+    let url = UrlFormat(constants.spotify_get_tracks, albumID);
+    return fetch(url, {
+        method: 'GET',
+        headers: {
+            'Authorization': 'Bearer ' + authToken
+        }
+    })
+    .then((response) => response.json())
+    .then((responseJson) => {
+        var tracks = [];
+        for(var item in responseJson.items) {
+            tracks.push({
+                name: responseJson.items[item].name,
+                id: responseJson.items[item].id,
+                duration: responseJson.items[item].duration_ms
+            })
+        }
+        return tracks;
+    })
+}
+
 
 
 export {
     AuthenticateUser,
     RequestAccessTokens,
     RequestTokenFromRefresh,
+    SearchArtist,
+    GetAlbumsFromArtist,
+    GetTracksFromAlbum,
 };

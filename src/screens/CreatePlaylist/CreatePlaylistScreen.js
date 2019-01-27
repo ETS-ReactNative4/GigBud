@@ -5,18 +5,29 @@ import { SecureStore } from 'expo';
 
 import colors from 'res/colors';
 import constants from 'library/utils/constants';
+import PlaylistTrack from 'components/PlaylistTrack';
 import { UrlFormat } from 'library/utils/functions';
 import { RequestTokenFromRefresh, SearchArtist,
-         GetAlbumsFromArtist, GetTracksFromAlbum } from 'library/utils/Spotify';
+         GetAlbumsFromArtist, GetTracksFromAlbum,
+         CreatePlaylist, AddSongsToPlaylist, GetUser } from 'library/utils/Spotify';
 import styles from './styles';
 
 export default class CreatePlaylistScreen extends Component {
     constructor(props) {
         super(props);
+        this.spotifyID = '';
+        this.spotifySecret = '';
+        this.refreshToken = '';
+        this.trackTitles = [];
         this.tracksOnSpotify = [];
+        this.artistImageUrl = '';
+        this.playlistTracks = [];
         this.state = {
             data: this.props.navigation.getParam('setlistData'),
             isLoading: true,
+            public: false,
+            shuffle: false,
+            title: ''
         }
     }
 
@@ -25,47 +36,47 @@ export default class CreatePlaylistScreen extends Component {
     }
 
     getAllTracks = async () => {
-        let refToken = await SecureStore.getItemAsync(constants.local_spotify_refresh_token);
-        let id = await SecureStore.getItemAsync(constants.local_spotify_id);
-        let secret = await SecureStore.getItemAsync(constants.local_spotify_secret);
-        let token = await RequestTokenFromRefresh(refToken, id, secret);
+        this.refreshToken = await SecureStore.getItemAsync(constants.local_spotify_refresh_token);
+        this.spotifyID = await SecureStore.getItemAsync(constants.local_spotify_id);
+        this.spotifySecret = await SecureStore.getItemAsync(constants.local_spotify_secret);
+        let token = await RequestTokenFromRefresh(this.refreshToken, this.spotifyID, this.spotifySecret);
         let artist = await SearchArtist(token, this.state.data.artist.name);
+        this.artistImageUrl = artist.artists.items[0].images[1].url;
         let albums = await GetAlbumsFromArtist(token, artist.artists.items[0].id);
         tracks = [];
+        trackTitles = [];
         for(var album in albums) {
             let tracksResult = await GetTracksFromAlbum(token, albums[album].id);
-            tracks = tracks.concat(tracksResult);
+            for(var track in tracksResult) {
+                tracks.push(tracksResult[track]);
+                trackTitles.push(tracksResult[track].name.toLowerCase());
+            }
         }
         this.tracksOnSpotify = tracks;
+        this.trackTitles = trackTitles;
         this.setState({isLoading: false})
     }
 
-
-    doFetch = async (url) => {
-        return fetch(url)
-            .then((response) => {
-                return response.json();
-            })
-            .catch((error) => {
-                console.log(error);
-            });
-    }
-
-    togglePublicPrivate = () => {
-        this.setState({public: !this.state.public});
-    }
-
-    toggleShuffle = () => {
-        this.setState({shuffle: !this.state.shuffle});
-    }
-
-    handleTitle = (text) => {
-        this.setState({title: text});
+    handleSubmit = async () => {
+        var trackIDs = [];
+        for(var song in this.playlistTracks) {
+            for(var track in this.tracksOnSpotify) {
+                if(this.playlistTracks[song].toLowerCase() === this.tracksOnSpotify[track].name.toLowerCase()) {
+                    trackIDs.push(this.tracksOnSpotify[track].id);
+                    break;
+                }
+            }
+        }
+        let token = await RequestTokenFromRefresh(this.refreshToken, this.spotifyID, this.spotifySecret);
+        let userID = await GetUser(token);
+        let playlistID = await CreatePlaylist(token, userID, this.state.title, !this.state.public);
+        AddSongsToPlaylist(token, playlistID, trackIDs);
     }
 
     render() {
         const {navigate} = this.props.navigation;
         const data = this.state.data;
+        this.playlistTracks = [];
         if(this.state.isLoading) {
             return (
                 <View>
@@ -74,11 +85,13 @@ export default class CreatePlaylistScreen extends Component {
             )
         } else {
             return (
-                <ScrollView style={styles.rootContainer}>
-
+                <ScrollView
+                    style={styles.rootContainer}>
+                    <Image source={{uri: this.artistImageUrl}} style={styles.image} />
                     <Text>{data.artist.name}</Text>
                     <Text>{data.eventDate} * {data.venue.name}</Text>
                     <Text>{data.venue.city.name}, {data.venue.city.stateCode}, {data.venue.city.country.code}</Text>
+                    <View style={styles.separator} />
                     <Text style={styles.header}>Tracks</Text>
                     {this._renderTracks(0)}
                     <Text style={styles.header}>Encore</Text>
@@ -87,22 +100,22 @@ export default class CreatePlaylistScreen extends Component {
                     <View>
                         <Text style={styles.header}>Public</Text>
                         <Switch
-                            onValueChange={this.togglePublicPrivate}
+                            onValueChange={() => this.setState({public: !this.state.public})}
                             value={this.state.public}/>
                         <Text style={styles.header}>Private</Text>
                     </View>
                     <View>
                         <Text style={styles.header}>Shuffle</Text>
                         <Switch
-                            onValueChange={this.toggleShuffle}
+                            onValueChange={() => this.setState({shuffle: !this.state.shuffle})}
                             value={this.state.shuffle}/>
                     </View>
                     <Text>Title</Text>
                     <TextInput
                         underlineColorAndroid='transparent'
                         placeholder='Playlist title...'
-                        onChangeText={this.handleTitle}/>
-                    <Button title='Create Playlist' onPress={() => console.log('pressed')} />
+                        onChangeText={(text) => this.setState({title: text})}/>
+                    <Button title='Create Playlist' onPress={this.handleSubmit} />
                 </ScrollView>
             )
         }
@@ -114,7 +127,14 @@ export default class CreatePlaylistScreen extends Component {
 
         if(data.sets.set.length > set) {
             for(var i = 0; i < data.sets.set[set].song.length; i++) {
-                tracks.push(<Text key={'row-' + i}>{data.sets.set[0].song[i].name}</Text>);
+                let name = data.sets.set[0].song[i].name;
+                let disabled = !this.trackTitles.includes(name.toLowerCase());
+                if(!disabled) this.playlistTracks.push(name);
+                tracks.push(
+                    <Text
+                        key={'row-' + i}
+                        style={disabled ? styles.disabledTrack : styles.enabledTrack}>{name}</Text>
+                );
             }
         }
 

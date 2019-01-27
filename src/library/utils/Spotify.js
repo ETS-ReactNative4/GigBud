@@ -162,6 +162,68 @@ async function GetTracksFromAlbum(authToken, albumID) {
     })
 }
 
+async function GetUser(authToken) {
+    return fetch('https://api.spotify.com/v1/me', {
+        method: 'GET',
+        headers: {
+            'Authorization': 'Bearer ' + authToken
+        }
+    })
+    .then((response) => response.json())
+    .then((resJson) => {
+        return resJson.id;
+    })
+}
+
+async function CreatePlaylist(authToken, userID, title, pub) {
+    var details = {
+        name: title,
+        description: 'New playlist description',
+        public: pub
+    }
+    let url = UrlFormat('https://api.spotify.com/v1/users/{0}/playlists', userID);
+    return fetch(url, {
+        method: 'POST',
+        headers: {
+            'Authorization': 'Bearer ' + authToken,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(details),
+    })
+    .then((response) => response.json())
+    .then((responseJson) => {
+        return responseJson.id;
+    })
+    .catch((error) => {
+        console.error(error);
+    })
+}
+
+async function AddSongsToPlaylist(authToken, id, tracks) {
+    var uris = []
+    for(var track in tracks) {
+        uris.push('spotify:track:' + tracks[track]);
+    }
+    formBody = 'uris=' + uris;
+
+    let url = UrlFormat('https://api.spotify.com/v1/playlists/{0}/tracks', id);
+    return fetch(url, {
+        method: 'POST',
+        headers: {
+            'Authorization': 'Bearer ' + authToken,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({uris: uris})
+    })
+    .then((response) => response.json())
+    .then((resJson) => {
+        console.log(resJson);
+    })
+    .catch((error) => {
+        console.error(error);
+    })
+}
+
 
 
 export {
@@ -171,4 +233,7 @@ export {
     SearchArtist,
     GetAlbumsFromArtist,
     GetTracksFromAlbum,
+    GetUser,
+    CreatePlaylist,
+    AddSongsToPlaylist
 };

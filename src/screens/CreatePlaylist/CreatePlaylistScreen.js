@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { ScrollView, View, Image, Text, Button, Switch, TextInput,
-         ActivityIndicator } from 'react-native';
+         ActivityIndicator, AsyncStorage } from 'react-native';
 import { SecureStore } from 'expo';
 
 import colors from 'res/colors';
@@ -58,6 +58,7 @@ export default class CreatePlaylistScreen extends Component {
     }
 
     handleSubmit = async () => {
+        this.addToPastPlaylists()
         var trackIDs = [];
         for(var song in this.playlistTracks) {
             for(var track in this.tracksOnSpotify) {
@@ -71,6 +72,31 @@ export default class CreatePlaylistScreen extends Component {
         let userID = await GetUser(token);
         let playlistID = await CreatePlaylist(token, userID, this.state.title, !this.state.public);
         AddSongsToPlaylist(token, playlistID, trackIDs);
+        this.props.navigation.navigate('App');
+    }
+
+    addToPastPlaylists = async () => {
+        let pastPlaylists = await AsyncStorage.getItem(constants.pastPlaylists);
+        if(pastPlaylists != null) {
+            pastPlaylists = JSON.parse(pastPlaylists);
+            if(pastPlaylists.length > 10) {
+                // Grab 9 most recent then push this one to the front
+                newPastPlaylists = [];
+                for(var i = 0; i < 9; i++) {
+                    newPastPlaylists.push(pastPlaylists[i]);
+                }
+                newPastPlaylists.unshift(this.state.data);
+            }
+            else {
+                // Push this setlist to the beginning as most recent
+                pastPlaylists.unshift(this.state.data);
+            }
+        } else {
+            // Create list
+            pastPlaylists = [];
+            pastPlaylists.push(this.state.data);
+        }
+        AsyncStorage.setItem(constants.pastPlaylists, JSON.stringify(pastPlaylists));
     }
 
     render() {

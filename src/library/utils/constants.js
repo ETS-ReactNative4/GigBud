@@ -1,5 +1,5 @@
 const constants = {
-    first_launch: 'first_launch',
+    isLoggedIn: 'isLoggedIn',
     firebase_table: 'api_keys',
     firebase_setlist_fm: 'setlist_fm',
     firebase_spotify_id: 'spotify_id',
@@ -17,6 +17,7 @@ const constants = {
     spotify_search_artists: 'https://api.spotify.com/v1/search?q={0}&type=artist',
     spotify_get_albums: 'https://api.spotify.com/v1/artists/{0}/albums',
     spotify_get_tracks: 'https://api.spotify.com/v1/albums/{0}/tracks',
+    pastPlaylists: 'pastPlaylists',
     
 }
 

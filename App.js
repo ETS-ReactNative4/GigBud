@@ -23,10 +23,10 @@ class InitialCheckScreen extends React.Component {
     }
 
     checkIfLaunched = async () => {
-        AsyncStorage.getItem(constants.first_launch).then((value) => {
+        AsyncStorage.getItem(constants.isLoggedIn).then((value) => {
             // console.log(value);
-            // value = 'true'
-            if(value === 'false') {
+            // value = 'false'
+            if(value === 'true') {
                  this.props.navigation.navigate('App');
             } else {
                 this.getAndStoreApiKey(constants.firebase_setlist_fm)

@@ -39,7 +39,7 @@ export default class AuthScreen extends Component {
         SecureStore.setItemAsync(constants.local_spotify_refresh_token,
             tokens.refresh_token);
         AsyncStorage.setItem(constants.local_streaming_service, 'spotify');
-        AsyncStorage.setItem(constants.first_launch, 'false');
+        AsyncStorage.setItem(constants.isLoggedIn, 'true');
     }
 
     render() {

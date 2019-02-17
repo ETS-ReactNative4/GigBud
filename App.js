@@ -4,7 +4,7 @@ import ProfileScreen from 'screens/Profile/ProfileScreen';
 import FavoritesScreen from 'screens/Favorites/FavoritesScreen';
 import SearchResultScreen from 'screens/SearchResult/SearchResultScreen';
 import CreatePlaylistScreen from 'screens/CreatePlaylist/CreatePlaylistScreen';
-import firebase from 'utils/firebase';
+import firebase from './src/library/utils/firebase';
 import constants from 'library/utils/constants';
 
 import React from 'react';
@@ -25,7 +25,7 @@ class InitialCheckScreen extends React.Component {
     checkIfLaunched = async () => {
         AsyncStorage.getItem(constants.isLoggedIn).then((value) => {
             // console.log(value);
-            // value = 'false'
+            value = 'false'
             if(value === 'true') {
                  this.props.navigation.navigate('App');
             } else {

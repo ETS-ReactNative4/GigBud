@@ -1,3 +1,5 @@
+import CryptoJS from 'react-native-crypto-js';
+
 export function UrlFormat(b) {
     var a = arguments;
     return b.replace(/(\{\{\d\}\}|\{\d\})/g, function (b) {
@@ -46,3 +48,31 @@ export function DecodeBase64(input:string = '') {
 
     return output;
 };
+
+async function GetJWT() {
+    var url = 'https://us-central1-gigbud-81332.cloudfunctions.net/getJWT';
+    return fetch(url, {
+        method: 'GET'
+    })
+    .then((response) => {
+        // json looks like: {token: jwtToken, iat: date_now}
+        return response.json();
+    })
+    // .then((responseJson) => {
+    //     var tok = responseJson.token;
+    //     console.log(tok);
+    //     // fetch('https://api.music.apple.com/v1/catalog/us/songs/203709340', {
+    //     //     method: 'GET',
+    //     //     headers: {
+    //     //         'Authorization': 'Bearer ' + tok
+    //     //     }
+    //     // })
+    //     // .then((res) => console.log(res))
+    //     // .then((resJson) => )
+    //     return tok;
+    // })
+};
+
+export {
+    GetJWT
+}

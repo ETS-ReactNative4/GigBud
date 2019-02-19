@@ -47,16 +47,16 @@ export default class SpotifyService {
 		]);
 	}
 
-	async getAllTracks() {
+	async getAllTracks(artistName) {
 		// Retrieve tokens from storage
-		let p = getTokensFromStorage();
+		let p = await this.getTokensFromStorage();
 		this.refreshToken = p[0];
         this.id = p[1];
         this.secret = p[2];
         // Get access token from the refresh token
-        let token = await RequestTokenFromRefresh(this.refreshToken, this.spotifyID, this.spotifySecret);
+        let token = await RequestTokenFromRefresh(this.refreshToken, this.id, this.secret);
         // Get artist details
-        let artist = await SearchArtist(token, this.state.data.artist.name);
+        let artist = await SearchArtist(token, artistName);
         this.artistImageUrl = artist.artists.items[0].images[1].url;
         // Get albums details
         let albums = await GetAlbumsFromArtist(token, artist.artists.items[0].id);
@@ -97,7 +97,7 @@ export default class SpotifyService {
         }
         // Shuffle IDs if user wants
         if(doShuffle)
-        	trackIDs = shuffle(trackIDs);
+        	trackIDs = this.shuffle(trackIDs);
         // Get access token from refresh
         let token = await RequestTokenFromRefresh(this.refreshToken, this.id, this.secret);
         // Get user profile

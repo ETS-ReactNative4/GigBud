@@ -25,7 +25,7 @@ class InitialCheckScreen extends React.Component {
     checkIfLaunched = async () => {
         AsyncStorage.getItem(constants.isLoggedIn).then((value) => {
             // console.log(value);
-            value = 'false'
+            //value = 'false'
             if(value === 'true') {
                  this.props.navigation.navigate('App');
             } else {

@@ -30,7 +30,7 @@ export default class CreatePlaylistScreen extends Component {
     }
 
     componentDidMount() {
-        getPreferredService().then(() => {
+        this.getPreferredService().then(() => {
             var factory = new StreamingFactory(this.prefService);
             this.serviceType = factory.createService();
             this.getAllTracks();
@@ -61,7 +61,7 @@ export default class CreatePlaylistScreen extends Component {
         // this.tracksOnSpotify = tracks;
         // this.trackTitles = trackTitles;
         // this.setState({isLoading: false})
-        let result = await this.serviceType.getAllTracks();
+        let result = await this.serviceType.getAllTracks(this.state.data.artist.name);
         // Assign things with the result
         if(result[0] === 'OK') {
             this.trackObjects = result[1];

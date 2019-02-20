@@ -4,6 +4,7 @@ import ProfileScreen from 'screens/Profile/ProfileScreen';
 import FavoritesScreen from 'screens/Favorites/FavoritesScreen';
 import SearchResultScreen from 'screens/SearchResult/SearchResultScreen';
 import CreatePlaylistScreen from 'screens/CreatePlaylist/CreatePlaylistScreen';
+import ErrorScreen from 'screens/Error/ErrorScreen';
 import firebase from './src/library/utils/firebase';
 import constants from 'library/utils/constants';
 
@@ -75,10 +76,12 @@ const SearchStack = createStackNavigator(
     {
         Home: HomeScreen,
         Results: SearchResultScreen,
-        CreatePlaylist: CreatePlaylistScreen
+        CreatePlaylist: CreatePlaylistScreen,
+        Error: ErrorScreen,
     },
     {
-        initialRouteName: 'Home'
+        initialRouteName: 'Home',
+        headerMode: 'none'
     }
 )
 

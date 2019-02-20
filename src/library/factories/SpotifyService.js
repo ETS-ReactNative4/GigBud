@@ -2,7 +2,8 @@ import {
 	RequestTokenFromRefresh, SearchArtist,
 	GetAlbumsFromArtist, GetTracksFromAlbum,
 	CreatePlaylist, AddSongsToPlaylist, GetUser,
-	AuthenticateUser, RequestAccessTokens
+	AuthenticateUser, RequestAccessTokens,
+	GetArtistRecommendations
 } from 'utils/Spotify';
 import constants from 'utils/constants';
 import { SecureStore } from 'expo';
@@ -108,5 +109,23 @@ export default class SpotifyService {
         AddSongsToPlaylist(token, playlistID, trackIDs).then(() => {
         	return ['OK'];
         });
+	}
+
+	async getRecommendations(artistNames) {
+		// Retrieve tokens from storage
+		let p = await this.getTokensFromStorage();
+		this.refreshToken = p[0];
+        this.id = p[1];
+        this.secret = p[2];
+        // Get access token from the refresh token
+        let token = await RequestTokenFromRefresh(this.refreshToken, this.id, this.secret);
+        // Search artists and get IDs
+		let ids = [];
+		for(let i = 0; i < artistNames.length; i++) {
+			let artist = await SearchArtist(token, artistNames[0]);
+			ids.push(artist.artists.items[0].id);
+		}
+		// Get recommendations from list of IDs
+		return GetArtistRecommendations(token, ids);
 	}
 }

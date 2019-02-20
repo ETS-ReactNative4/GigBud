@@ -1,19 +1,23 @@
 import React, { Component } from 'react';
-import { FlatList, ScrollView, View, Image, Text, Button } from 'react-native';
+import { FlatList, ScrollView, View, Image, Text, Button,
+         ActivityIndicator } from 'react-native';
 import { SecureStore } from 'expo';
 
 import SearchResultTicketButton from 'library/components/SearchResultTicketButton';
 import constants from 'library/utils/constants';
+import colors from 'res/colors';
 import { UrlFormat } from 'library/utils/functions';
 import styles from './styles';
+
 
 export default class SearchResultsScreen extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            loading: true,
+            isLoading: true,
             data: [],
-            pageCounter: 1
+            pageCounter: 1,
+            status: 0
         }
     }
 
@@ -28,9 +32,12 @@ export default class SearchResultsScreen extends Component {
         } else {
             let api_key = await SecureStore.getItemAsync(constants.local_setlist_fm);
             var url = UrlFormat(constants.setlist_fm_search_artists, encodeURIComponent(searchVal));
-            console.log(url);
             let data = await this.doFetch(url, api_key);
-            this.searchForSetlist(data.artist[0].mbid);
+            if(data[0] === 200)
+                this.searchForSetlist(data[1].artist[0].mbid);
+            else
+                this.setState({isLoading: false, status: data[0]})
+
         }
     }
 
@@ -38,10 +45,10 @@ export default class SearchResultsScreen extends Component {
         let api_key = await SecureStore.getItemAsync(constants.local_setlist_fm);
         var url = UrlFormat(constants.setlist_fm_search_setlists, mbid, this.state.pageCounter);
         let data = await this.doFetch(url, api_key);
-        if(data != null) {
+        if(data[0] === 200) {
             let oldData = this.state.data;
-            data.setlist.forEach((setlist) => oldData.push(setlist));
-            this.setState({loading: false, data: oldData});
+            data[1].setlist.forEach((setlist) => oldData.push(setlist));
+            this.setState({isLoading: false, data: oldData});
         }
     }
 
@@ -58,25 +65,26 @@ export default class SearchResultsScreen extends Component {
             const data = response.json();
             return Promise.all([statusCode, data]);
         })
-        .then(([code, data]) => {
-            if(code === 200) {
-                // console.log(JSON.stringify(data, null, 2));
-                return data;
-            } else if(code === 404) {
-                this.setState({isLoading: false, status: 404});
-            } else {
-                this.props.navigation.navigate('Error');
-            }
-        })
         .catch((error) => {
             console.log(error);
         });
     }
 
     render() {
-        if(this.state.loading) {
-            return null;
+        if(this.state.isLoading) {
+            return (
+                <View>
+                    <ActivityIndicator size='large' color={colors.black} />
+                </View>
+            )
         } else {
+            if(this.state.status === 404) {
+                return(
+                    <View style={styles.rootContainer}>
+                        <Text> Cannot find {this.props.navigation.getParam('searchValue', null)} </Text>
+                    </View>
+                )
+            }
             return (
                 <FlatList
                     style={styles.parent}

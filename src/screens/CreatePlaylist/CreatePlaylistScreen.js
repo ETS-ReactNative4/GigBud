@@ -42,25 +42,6 @@ export default class CreatePlaylistScreen extends Component {
     }
 
     getAllTracks = async () => {
-        // this.refreshToken = await SecureStore.getItemAsync(constants.local_spotify_refresh_token);
-        // this.spotifyID = await SecureStore.getItemAsync(constants.local_spotify_id);
-        // this.spotifySecret = await SecureStore.getItemAsync(constants.local_spotify_secret);
-        // let token = await RequestTokenFromRefresh(this.refreshToken, this.spotifyID, this.spotifySecret);
-        // let artist = await SearchArtist(token, this.state.data.artist.name);
-        // this.artistImageUrl = artist.artists.items[0].images[1].url;
-        // let albums = await GetAlbumsFromArtist(token, artist.artists.items[0].id);
-        // tracks = [];
-        // trackTitles = [];
-        // for(var album in albums) {
-        //     let tracksResult = await GetTracksFromAlbum(token, albums[album].id);
-        //     for(var track in tracksResult) {
-        //         tracks.push(tracksResult[track]);
-        //         trackTitles.push(tracksResult[track].name.toLowerCase());
-        //     }
-        // }
-        // this.tracksOnSpotify = tracks;
-        // this.trackTitles = trackTitles;
-        // this.setState({isLoading: false})
         let result = await this.serviceType.getAllTracks(this.state.data.artist.name);
         // Assign things with the result
         if(result[0] === 'OK') {
@@ -75,20 +56,6 @@ export default class CreatePlaylistScreen extends Component {
     }
 
     handleSubmit = async () => {
-        // this.addToPastPlaylists()
-        // var trackIDs = [];
-        // for(var song in this.playlistTracks) {
-        //     for(var track in this.tracksOnSpotify) {
-        //         if(this.playlistTracks[song].toLowerCase() === this.tracksOnSpotify[track].name.toLowerCase()) {
-        //             trackIDs.push(this.tracksOnSpotify[track].id);
-        //             break;
-        //         }
-        //     }
-        // }
-        // let token = await RequestTokenFromRefresh(this.refreshToken, this.spotifyID, this.spotifySecret);
-        // let userID = await GetUser(token);
-        // let playlistID = await CreatePlaylist(token, userID, this.state.title, !this.state.public);
-        // AddSongsToPlaylist(token, playlistID, trackIDs);
         let result = await this.serviceType.handleSubmit(this.playlistTracks, this.trackObjects,
                         this.state.title, this.state.isPublic, this.state.doShuffle);
         // Let user know what happened on back-end

@@ -118,6 +118,28 @@ async function SearchArtist(authToken, artist) {
     })
 }
 
+async function GetRelatedArtists(authToken, url) {
+    return fetch(url, {
+        method: 'GET',
+        headers: {
+            'Authorization': 'Bearer ' + authToken
+        }
+    })
+    .then((response) => response.json())
+}
+
+async function GetArtistRecommendations(authToken, ids) {
+    var artists = [];
+    for(let i = 0; i < ids.length; i++) {
+        let url = UrlFormat('https://api.spotify.com/v1/artists/{0}/related-artists', ids[i]);
+        let data = await GetRelatedArtists(authToken, url);
+        for(let j = 0; j < data.artists.length; j++) {
+            artists.push({name: data.artists[j].name, genre: data.artists[j].genres[1]});
+        }
+    }
+    return artists;
+}
+
 async function GetAlbumsFromArtist(authToken, artistID) {
     let url = UrlFormat(constants.spotify_get_albums, artistID);
     return fetch(url, {
@@ -235,5 +257,6 @@ export {
     GetTracksFromAlbum,
     GetUser,
     CreatePlaylist,
-    AddSongsToPlaylist
+    AddSongsToPlaylist,
+    GetArtistRecommendations
 };

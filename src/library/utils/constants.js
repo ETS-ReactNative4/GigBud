@@ -18,7 +18,8 @@ const constants = {
     spotify_get_albums: 'https://api.spotify.com/v1/artists/{0}/albums',
     spotify_get_tracks: 'https://api.spotify.com/v1/albums/{0}/tracks',
     pastPlaylists: 'pastPlaylists',
-    
+    favoriteSetlists: 'favorited',
+
 }
 
 export default constants;

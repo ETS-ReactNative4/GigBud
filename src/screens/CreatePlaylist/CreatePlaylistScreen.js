@@ -25,8 +25,10 @@ export default class CreatePlaylistScreen extends Component {
             isLoading: true,
             isPublic: false,
             doShuffle: false,
+            isFavorite: false,
             title: ''
         }
+        console.log(this.state.data);
     }
 
     componentDidMount() {
@@ -35,6 +37,26 @@ export default class CreatePlaylistScreen extends Component {
             this.serviceType = factory.createService();
             this.getAllTracks();
         });
+        this.isaFavoriteSetlist();
+    }
+
+    isaFavoriteSetlist = async () => {
+        this.favoriteSetlists = await AsyncStorage.getItem(constants.favoriteSetlists);
+        console.log(this.favoriteSetlists);
+        if(this.favoriteSetlists == null) {
+            this.favoriteSetlists = [];
+            this.setState({isFavorite: false});
+        } else {
+            this.favoriteSetlists = JSON.parse(this.favoriteSetlists);
+            let isFavorite = false;
+            for(var setlist in this.favoriteSetlists) {
+                if(this.state.data.id === this.favoriteSetlists[setlist].id) {
+                    isFavorite = true;
+                }
+            }
+            console.log(isFavorite);
+            this.setState({isFavorite: isFavorite});
+        }
     }
 
     getPreferredService = async () => {
@@ -91,6 +113,25 @@ export default class CreatePlaylistScreen extends Component {
         AsyncStorage.setItem(constants.pastPlaylists, JSON.stringify(pastPlaylists));
     }
 
+    toggleFavorite = async () => {
+        // If this setlist is in favorites, remove
+        if(this.state.isFavorite) {
+            // Find this setlist in the list
+            let index = 0;
+            for(let i = 0; i < this.favoriteSetlists.length; i++) {
+                if(this.favoriteSetlists[i].id === this.state.data.id) {
+                    index = i;
+                }
+            }
+            // Remove it
+            this.favoriteSetlists.splice(index, 1);
+        } else {
+            this.favoriteSetlists.unshift(this.state.data);
+        }
+        AsyncStorage.setItem(constants.favoriteSetlists, JSON.stringify(this.favoriteSetlists));
+        this.setState({isFavorite: !this.state.isFavorite});
+    }
+
     render() {
         const {navigate} = this.props.navigation;
         const data = this.state.data;
@@ -109,12 +150,14 @@ export default class CreatePlaylistScreen extends Component {
                     <Text>{data.artist.name}</Text>
                     <Text>{data.eventDate} * {data.venue.name}</Text>
                     <Text>{data.venue.city.name}, {data.venue.city.stateCode}, {data.venue.city.country.code}</Text>
+                    <Button
+                        title={this.state.isFavorite ? 'Remove favorite' : 'Add favorite'}
+                        onPress={this.toggleFavorite} />
                     <View style={styles.separator} />
                     <Text style={styles.header}>Tracks</Text>
                     {this._renderTracks(0)}
                     <Text style={styles.header}>Encore</Text>
                     {this._renderTracks(1)}
-                    <Text style={styles.header}>Duration:...</Text>
                     <View>
                         <Text style={styles.header}>Public</Text>
                         <Switch
@@ -147,7 +190,9 @@ export default class CreatePlaylistScreen extends Component {
             for(var i = 0; i < data.sets.set[set].song.length; i++) {
                 let name = data.sets.set[0].song[i].name;
                 let disabled = !this.trackTitles.includes(name.toLowerCase());
-                if(!disabled) this.playlistTracks.push(name);
+                if(!disabled) {
+                    this.playlistTracks.push(name);
+                }
                 tracks.push(
                     <Text
                         key={'row-' + i}

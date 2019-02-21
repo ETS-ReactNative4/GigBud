@@ -8,6 +8,7 @@ import SearchResultTicketButton from 'library/components/SearchResultTicketButto
 import StreamingFactory from 'library/factories/StreamingFactory';
 import constants from 'utils/constants';
 import colors from 'res/colors';
+import styles from './styles';
 
 export default class ProfileScreen extends Component {
     constructor(props) {
@@ -30,23 +31,58 @@ export default class ProfileScreen extends Component {
         .then(() => this.setState({isLoading: false}));
     }
 
+    hasBeenLongerThanADay = async () => {
+        let result = false;
+        let time = await AsyncStorage.getItem('artistRecsTimeStamp');
+        if(time != null) {
+            let timeNow = Date.now() / 1000; // seconds since UNIX epoch
+            if((timeNow - parseInt(time)) < 86,400) { // (60 secs)*(60 mins)*(24 hr)
+                result = false;
+            } else {
+                result = true;
+            }
+        } else {
+            result = true;
+        }
+        return result;
+    }
+
     getArtistRecommendations = async () => {
         // Get 3 artist suggestions based on 3 recent playlists
-        // maybe something like get all recommendations for each
-        // then count up if any appear more than once
-        // suggest the highest ones, otherwise random
-        let factory = new StreamingFactory(this.prefService);
-        let serviceType = factory.createService();
-        let pastPlaylists = this.state.pastPlaylists;
-        let artistNames = [];
-        var i = 0;
-        while(i < pastPlaylists.length && i < 3) {
-            artistNames.push(pastPlaylists[i].artist.name);
-            i++;
+        // Generate random index number, add that artist to list to render
+        // Add time stamp to storage to only do once per day
+        let hasBeenLongerThanADay = await this.hasBeenLongerThanADay();
+
+        if(hasBeenLongerThanADay) {
+            // Generate new recs
+            let factory = new StreamingFactory(this.prefService);
+            let serviceType = factory.createService();
+            let artistNames = [];
+            // Get 3 most recent playlists
+            var i = 0;
+            while(i < this.state.pastPlaylists.length && i < 3) {
+                artistNames.push(this.state.pastPlaylists[i].artist.name);
+                i++;
+            }
+            // Get related artists
+            // [{name: artistName, genre: genre}]
+            let recommendations = await serviceType.getRecommendations(artistNames);
+            // Get 3 random artists
+            let actualRecs = [];
+            for(let j = 0; j < 3; j++) {
+                let rand = Math.floor(Math.random() * recommendations.length);
+                actualRecs.push(recommendations[rand]);
+                recommendations.splice(rand, 1);
+            }
+            // Save timestamp and artist recommendations to storage
+            AsyncStorage.setItem('artistRecsTimeStamp', (Date.now()).toString());
+            AsyncStorage.setItem('pastArtistRecommendations', JSON.stringify(actualRecs));
+            this.setState({recommendations: actualRecs});
+        } else {
+            // use past recs
+            let pastRecs = await AsyncStorage.getItem('pastArtistRecommendations');
+            this.setState({recommendations: JSON.parse(pastRecs)});
         }
-        // [{name: artistName, genre: genre}]
-        let recommendations = await serviceType.getRecommendations(artistNames);
-        this.setState({recommendations: recommendations});
     }
 
     getPastPlaylists = async () => {
@@ -81,7 +117,7 @@ export default class ProfileScreen extends Component {
         }
 
         return (
-            <View>
+            <View style={styles.rootContainer}>
 
                 <Text>Profile screen</Text>
 
@@ -89,10 +125,10 @@ export default class ProfileScreen extends Component {
                     title="Logout"
                     onPress={this.logout} />
 
-                <View>
+                <View style={styles.parent}>
                     {this._renderRecentPlaylists()}
                 </View>
-                <View>
+                <View style={styles.parent}>
                     {this._renderArtistSuggestions()}
                 </View>
             </View>

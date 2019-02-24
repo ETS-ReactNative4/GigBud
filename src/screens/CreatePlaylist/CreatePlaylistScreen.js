@@ -28,7 +28,6 @@ export default class CreatePlaylistScreen extends Component {
             isFavorite: false,
             title: ''
         }
-        console.log(this.state.data);
     }
 
     componentDidMount() {
@@ -36,13 +35,36 @@ export default class CreatePlaylistScreen extends Component {
             var factory = new StreamingFactory(this.prefService);
             this.serviceType = factory.createService();
             this.getAllTracks();
+            // this.getOtherArtists();
         });
         this.isaFavoriteSetlist();
     }
 
+    getOtherArtists = async () => {
+        let other = [];
+        let otherNames = [];
+        let array = await GetOtherArtists(this.state.data.eventDate, this.state.data.venueId);
+        if(array[0] === '200') {
+            // success
+            for(var i in array[1].setlist) {
+                if(array[1].setlist[i].artist.mbid != this.state.data.artist.mbid) {
+                    // it is a different artist
+                    if(array[1].setlist[i].sets.set.length > 0) {
+                        other.push(array[1].setlist[i]);
+                        other.push(array[1].setlist[i].artist.name)
+                    }
+                }
+            }
+            this.otherArtists = other;
+            this.otherArtistsNames = otherNames;
+        } else {
+            // error
+        }
+    }
+
     isaFavoriteSetlist = async () => {
         this.favoriteSetlists = await AsyncStorage.getItem(constants.favoriteSetlists);
-        console.log(this.favoriteSetlists);
+        // console.log(this.favoriteSetlists);
         if(this.favoriteSetlists == null) {
             this.favoriteSetlists = [];
             this.setState({isFavorite: false});
@@ -54,7 +76,6 @@ export default class CreatePlaylistScreen extends Component {
                     isFavorite = true;
                 }
             }
-            console.log(isFavorite);
             this.setState({isFavorite: isFavorite});
         }
     }
@@ -133,6 +154,10 @@ export default class CreatePlaylistScreen extends Component {
         this.setState({isFavorite: !this.state.isFavorite});
     }
 
+    handleSongClick(title) {
+        this.playlistTracks
+    }
+
     render() {
         const {navigate} = this.props.navigation;
         const data = this.state.data;
@@ -186,6 +211,7 @@ export default class CreatePlaylistScreen extends Component {
     _renderTracks(set) {
         let tracks = [];
         let data = this.state.data;
+        // console.log(data);
 
         if(data.sets.set.length > set) {
             for(var i = 0; i < data.sets.set[set].song.length; i++) {

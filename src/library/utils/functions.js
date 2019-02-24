@@ -73,6 +73,25 @@ async function GetJWT() {
     // })
 };
 
+async function GetOtherArtists(date, venueId) {
+    let api_key = await SecureStore.getItemAsync(constants.local_setlist_fm);
+    let url = 'https://api.setlist.fm/rest/1.0/search/setlists?' +
+                'date=' + date +
+                '&p=1' +
+                '&venueId=' + venueId;
+    return fetch(url, {
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json',
+            'x-api-key': api_key
+        }
+    })
+    .then((response) => {
+        return Promise.all([response.status, response.json()]);
+    });
+}
+
 export {
-    GetJWT
+    GetJWT,
+    GetOtherArtists
 }

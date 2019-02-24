@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { View, Image, Text, Button, ActivityIndicator,
          AsyncStorage } from 'react-native';
 
+import SearchResultTicketButton from 'library/components/SearchResultTicketButton';
 import constants from 'library/utils/constants';
 import colors from 'res/colors';
 
@@ -20,7 +21,7 @@ export default class FavoritesScreen extends Component {
     getFavoriteSetlists = async () => {
         let setlists = await AsyncStorage.getItem(constants.favoriteSetlists);
         if(setlists != null) {
-            this.setlists = setlists;
+            this.setlists = JSON.parse(setlists);
         } else {
             this.setlists = [];
         }
@@ -51,8 +52,12 @@ export default class FavoritesScreen extends Component {
     _renderFavorites() {
         // TODO: render SearchResultTicketButton for each setlist
         let setlists = [];
-        for(var setlist in this.setlists) {
-            setlists.push(<Text key={'row-' + setlist}>{this.setlists[setlist].id}</Text>);
+        for(var i = 0; i < this.setlists.length; i++) {
+            setlists.push(
+                <SearchResultTicketButton
+                    key={'row-' + i}
+                    data={this.setlists[i]} />
+            );
         }
         return setlists;
     }

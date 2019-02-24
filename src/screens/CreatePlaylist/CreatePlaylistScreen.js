@@ -83,6 +83,7 @@ export default class CreatePlaylistScreen extends Component {
         // Let user know what happened on back-end
         if(result === 'OK') {
             // popup modal or navigate to success screen
+            this.addToPastPlaylists();
         } else {
             // popup modal error? - display error description
         }

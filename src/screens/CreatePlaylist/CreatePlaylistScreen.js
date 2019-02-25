@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 import { ScrollView, View, Image, Text, Button, Switch, TextInput,
-         ActivityIndicator, AsyncStorage } from 'react-native';
+         ActivityIndicator, AsyncStorage, Modal } from 'react-native';
 import { SecureStore } from 'expo';
 
 import colors from 'res/colors';
 import constants from 'library/utils/constants';
 import StreamingFactory from 'library/factories/StreamingFactory';
 import PlaylistTrack from 'components/PlaylistTrack';
-import { UrlFormat } from 'library/utils/functions';
+import { UrlFormat, GetOtherArtists } from 'library/utils/functions';
 import { RequestTokenFromRefresh, SearchArtist,
          GetAlbumsFromArtist, GetTracksFromAlbum,
          CreatePlaylist, AddSongsToPlaylist, GetUser } from 'library/utils/Spotify';
@@ -23,10 +23,12 @@ export default class CreatePlaylistScreen extends Component {
         this.state = {
             data: this.props.navigation.getParam('setlistData'),
             isLoading: true,
+            includeOtherArtists: false,
             isPublic: false,
             doShuffle: false,
             isFavorite: false,
-            title: ''
+            title: '',
+            displayModal: false
         }
     }
 
@@ -35,7 +37,7 @@ export default class CreatePlaylistScreen extends Component {
             var factory = new StreamingFactory(this.prefService);
             this.serviceType = factory.createService();
             this.getAllTracks();
-            // this.getOtherArtists();
+            this.getOtherArtists();
         });
         this.isaFavoriteSetlist();
     }
@@ -43,15 +45,16 @@ export default class CreatePlaylistScreen extends Component {
     getOtherArtists = async () => {
         let other = [];
         let otherNames = [];
-        let array = await GetOtherArtists(this.state.data.eventDate, this.state.data.venueId);
-        if(array[0] === '200') {
+        let array = await GetOtherArtists(this.state.data.eventDate, this.state.data.venue.id);
+        // console.log(array);
+        if(array[0] === 200) {
             // success
             for(var i in array[1].setlist) {
                 if(array[1].setlist[i].artist.mbid != this.state.data.artist.mbid) {
                     // it is a different artist
                     if(array[1].setlist[i].sets.set.length > 0) {
                         other.push(array[1].setlist[i]);
-                        other.push(array[1].setlist[i].artist.name)
+                        otherNames.push(array[1].setlist[i].artist.name)
                     }
                 }
             }
@@ -100,7 +103,8 @@ export default class CreatePlaylistScreen extends Component {
 
     handleSubmit = async () => {
         let result = await this.serviceType.handleSubmit(this.playlistTracks, this.trackObjects,
-                        this.state.title, this.state.isPublic, this.state.doShuffle);
+                        this.state.title, this.state.isPublic, this.state.doShuffle,
+                        this.state.includeOtherArtists, this.otherArtists);
         // Let user know what happened on back-end
         if(result === 'OK') {
             // popup modal or navigate to success screen
@@ -154,10 +158,6 @@ export default class CreatePlaylistScreen extends Component {
         this.setState({isFavorite: !this.state.isFavorite});
     }
 
-    handleSongClick(title) {
-        this.playlistTracks
-    }
-
     render() {
         const {navigate} = this.props.navigation;
         const data = this.state.data;
@@ -170,8 +170,7 @@ export default class CreatePlaylistScreen extends Component {
             )
         } else {
             return (
-                <ScrollView
-                    style={styles.rootContainer}>
+                <ScrollView style={styles.rootContainer}>
                     <Image source={{uri: this.artistImageUrl}} style={styles.image} />
                     <Text>{data.artist.name}</Text>
                     <Text>{data.eventDate} * {data.venue.name}</Text>
@@ -184,6 +183,12 @@ export default class CreatePlaylistScreen extends Component {
                     {this._renderTracks(0)}
                     <Text style={styles.header}>Encore</Text>
                     {this._renderTracks(1)}
+                    <View>
+                        <Text>Include other artists at this gig</Text>
+                        <Switch
+                            onValueChange={() => this.setState({includeOtherArtists: !this.state.includeOtherArtists})}
+                            value={this.state.includeOtherArtists}/>
+                    </View>
                     <View>
                         <Text style={styles.header}>Public</Text>
                         <Switch

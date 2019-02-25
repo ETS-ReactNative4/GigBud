@@ -85,9 +85,35 @@ export default class SpotifyService {
 		return a;
 	}
 
-	async handleSubmit(playlistTracks, trackObjects, title, isPublic, doShuffle) {
-		// Get track IDs
+	async handleSubmit(playlistTracks, trackObjects, title, isPublic, doShuffle,
+						includeOtherArtists, otherArtists) {
+		// Get other artists
+		if(includeOtherArtists) {
+			for(let i = 0; i < otherArtists.length; i++) {
+				// Get all tracks from an artist
+				let allTracks = await this.getAllTracks(otherArtists[i].artist.name);
+				let allTrackTitles = allTracks[2];
+				console.log(allTrackTitles);
+				// Push the track objects for this artist onto the list
+				for(var obj in allTracks[1]) {
+					trackObjects.push(allTracks[1][obj]);
+				}
+				// Iterate over their songs in their sets (possibly multiple sets - encore)
+				for(let j = 0; j < otherArtists[i].sets.set.length; j++) {
+					for(let k = 0; k < otherArtists[i].sets.set[j].song.length; k++) {
+						// Add track to playlist
+						let songTitle = otherArtists[i].sets.set[j].song[k].name;
+						console.log(songTitle);
+						if(allTrackTitles.includes(songTitle.toLowerCase())) {
+							playlistTracks.push(songTitle);
+						}
+					}
+				}
+			}
+		}
+		// console.log(playlistTracks);
 		var trackIDs = [];
+		// Get track IDs
         for(var song in playlistTracks) {
             for(var track in trackObjects) {
                 if(playlistTracks[song].toLowerCase() === trackObjects[track].name.toLowerCase()) {

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { ScrollView, View, Image, Text, Button, Switch, TextInput,
-         ActivityIndicator, AsyncStorage, Modal } from 'react-native';
+         ActivityIndicator, AsyncStorage, Modal,
+         KeyboardAvoidingView } from 'react-native';
 import { SecureStore } from 'expo';
 
 import colors from 'res/colors';
@@ -170,6 +171,7 @@ export default class CreatePlaylistScreen extends Component {
             )
         } else {
             return (
+                <KeyboardAvoidingView style={styles.rootContainer} behavior='padding' enabled>
                 <ScrollView style={styles.rootContainer}>
                     <Image source={{uri: this.artistImageUrl}} style={styles.image} />
                     <Text>{data.artist.name}</Text>
@@ -209,6 +211,7 @@ export default class CreatePlaylistScreen extends Component {
                         onChangeText={(text) => this.setState({title: text})}/>
                     <Button title='Create Playlist' onPress={this.handleSubmit} />
                 </ScrollView>
+                </KeyboardAvoidingView>
             )
         }
     }

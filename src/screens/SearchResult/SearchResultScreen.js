@@ -1,28 +1,47 @@
 import React, { Component } from 'react';
 import { FlatList, ScrollView, View, Image, Text, Button,
-         ActivityIndicator } from 'react-native';
+         ActivityIndicator, AsyncStorage } from 'react-native';
 import { SecureStore } from 'expo';
 
 import SearchResultTicketButton from 'library/components/SearchResultTicketButton';
+import { UrlFormat } from 'library/utils/functions';
+import StreamingFactory from 'library/factories/StreamingFactory';
 import constants from 'library/utils/constants';
 import colors from 'res/colors';
-import { UrlFormat } from 'library/utils/functions';
 import styles from './styles';
-
 
 export default class SearchResultsScreen extends Component {
     constructor(props) {
         super(props);
+        this.artistName = this.props.navigation.getParam('searchValue', null);
         this.state = {
             isLoading: true,
             data: [],
             pageCounter: 1,
-            status: 0
+            status: 0,
+            imageUrl: ''
         }
     }
 
     componentDidMount() {
-        this.searchForArtist();
+        this.loadData().then(() => {
+            this.setState({isLoading: false})
+        });
+    }
+
+    loadData = async () => {
+        return Promise.all([
+            this.searchForArtist(),
+            this.getArtistImage()
+        ]);
+    }
+
+    getArtistImage = async () => {
+        let prefService = await AsyncStorage.getItem(constants.local_streaming_service);
+        var factory = new StreamingFactory(prefService);
+        var service = factory.createService();
+        let imageUrl = await service.GetImageUrl(this.artistName);
+        this.setState({imageUrl: imageUrl});
     }
 
     searchForArtist = async () => {
@@ -36,7 +55,7 @@ export default class SearchResultsScreen extends Component {
             if(data[0] === 200)
                 this.searchForSetlist(data[1].artist[0].mbid);
             else
-                this.setState({isLoading: false, status: data[0]})
+                this.setState({status: data[0]})
 
         }
     }
@@ -48,7 +67,7 @@ export default class SearchResultsScreen extends Component {
         if(data[0] === 200) {
             let oldData = this.state.data;
             data[1].setlist.forEach((setlist) => oldData.push(setlist));
-            this.setState({isLoading: false, data: oldData});
+            this.setState({data: oldData});
         }
     }
 
@@ -86,16 +105,19 @@ export default class SearchResultsScreen extends Component {
                 )
             }
             return (
-                <FlatList
-                    style={styles.parent}
-                    data={this.state.data}
-                    onEndReachedThreshold={0.5}
-                    onEndReached={() => {
-                        this.loadMore()
-                    }}
-                    renderItem={({item}) => <SearchResultTicketButton data={item}/>}
-                    keyExtractor={item => item.id}
-                />
+                <View style={styles.rootContainer}>
+                    <Image source={{uri: this.state.imageUrl}} style={styles.image} />
+                    <FlatList
+                        style={styles.parent}
+                        data={this.state.data}
+                        onEndReachedThreshold={0.5}
+                        onEndReached={() => {
+                            this.loadMore()
+                        }}
+                        renderItem={({item}) => <SearchResultTicketButton data={item}/>}
+                        keyExtractor={item => item.id}
+                    />
+                </View>
             )
         }
     }

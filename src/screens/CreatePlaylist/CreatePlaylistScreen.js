@@ -106,6 +106,7 @@ export default class CreatePlaylistScreen extends Component {
         let result = await this.serviceType.handleSubmit(this.playlistTracks, this.trackObjects,
                         this.state.title, this.state.isPublic, this.state.doShuffle,
                         this.state.includeOtherArtists, this.otherArtists);
+        console.log(result);
         // Let user know what happened on back-end
         if(result === 'OK') {
             // popup modal or navigate to success screen
@@ -127,6 +128,7 @@ export default class CreatePlaylistScreen extends Component {
                     newPastPlaylists.push(pastPlaylists[i]);
                 }
                 newPastPlaylists.unshift(this.state.data);
+                pastPlaylists = newPastPlaylists;
             }
             else {
                 // Push this setlist to the beginning as most recent

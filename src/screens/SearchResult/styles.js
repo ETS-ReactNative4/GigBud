@@ -7,6 +7,10 @@ const styles = StyleSheet.create({
     },
     parent: {
         flex: 1
+    },
+    image: {
+        height: 200,
+        width: 400,
     }
 });
 

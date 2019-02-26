@@ -132,8 +132,8 @@ export default class SpotifyService {
         // Create empty playlist
         let playlistID = await CreatePlaylist(token, userID, title, isPublic);
         // Add all songs to the new empty playlist
-        AddSongsToPlaylist(token, playlistID, trackIDs).then(() => {
-        	return ['OK'];
+        return AddSongsToPlaylist(token, playlistID, trackIDs).then(() => {
+        	return 'OK';
         });
 	}
 
@@ -148,10 +148,23 @@ export default class SpotifyService {
         // Search artists and get IDs
 		let ids = [];
 		for(let i = 0; i < artistNames.length; i++) {
-			let artist = await SearchArtist(token, artistNames[0]);
+			let artist = await SearchArtist(token, artistNames[i]);
 			ids.push(artist.artists.items[0].id);
 		}
 		// Get recommendations from list of IDs
 		return GetArtistRecommendations(token, ids);
+	}
+
+	async GetImageUrl(artistName) {
+		// Retrieve tokens from storage
+		let p = await this.getTokensFromStorage();
+		this.refreshToken = p[0];
+		this.id = p[1];
+		this.secret = p[2];
+		// Get access token from refresh token
+		let token = await RequestTokenFromRefresh(this.refreshToken, this.id, this.secret)
+		// Search artist and return image url
+		let artistJson = await SearchArtist(token, artistName);
+        return artistJson.artists.items[0].images[1].url;
 	}
 }

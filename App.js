@@ -14,13 +14,17 @@ import {
     createSwitchNavigator, createStackNavigator,
     createBottomTabNavigator, createAppContainer
 } from 'react-navigation';
-import { SecureStore } from 'expo';
+import { Font, SecureStore } from 'expo';
 
+import fonts from 'res/fonts';
 
 class InitialCheckScreen extends React.Component {
     constructor(props) {
         super(props);
-        this.checkIfLaunched()
+        Font.loadAsync({
+            'bad-script-regular': fonts.badScript
+        })
+        .then(() => this.checkIfLaunched());
     }
 
     checkIfLaunched = async () => {

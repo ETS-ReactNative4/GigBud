@@ -3,6 +3,7 @@ import { ScrollView, View, Image, Text, Button, Switch, TextInput,
          ActivityIndicator, AsyncStorage, Modal,
          KeyboardAvoidingView } from 'react-native';
 import { SecureStore } from 'expo';
+import { Overlay } from 'react-native-elements';
 
 import colors from 'res/colors';
 import constants from 'library/utils/constants';
@@ -29,7 +30,8 @@ export default class CreatePlaylistScreen extends Component {
             doShuffle: false,
             isFavorite: false,
             title: '',
-            displayModal: false
+            submitSuccessful: false,
+            submitFail: false
         }
     }
 
@@ -111,8 +113,10 @@ export default class CreatePlaylistScreen extends Component {
         if(result === 'OK') {
             // popup modal or navigate to success screen
             this.addToPastPlaylists();
+            this.setState({submitSuccessful: true});
         } else {
             // popup modal error? - display error description
+            this.setState({submitFail: true})
         }
         this.props.navigation.navigate('App');
     }
@@ -174,45 +178,61 @@ export default class CreatePlaylistScreen extends Component {
         } else {
             return (
                 <KeyboardAvoidingView style={styles.rootContainer} behavior='padding' enabled>
-                <ScrollView style={styles.rootContainer}>
-                    <Image source={{uri: this.artistImageUrl}} style={styles.image} />
-                    <Text>{data.artist.name}</Text>
-                    <Text>{data.eventDate} * {data.venue.name}</Text>
-                    <Text>{data.venue.city.name}, {data.venue.city.stateCode}, {data.venue.city.country.code}</Text>
-                    <Button
-                        title={this.state.isFavorite ? 'Remove favorite' : 'Add favorite'}
-                        onPress={this.toggleFavorite} />
-                    <View style={styles.separator} />
-                    <Text style={styles.header}>Tracks</Text>
-                    {this._renderTracks(0)}
-                    <Text style={styles.header}>Encore</Text>
-                    {this._renderTracks(1)}
-                    <View>
-                        <Text>Include other artists at this gig</Text>
-                        <Switch
-                            onValueChange={() => this.setState({includeOtherArtists: !this.state.includeOtherArtists})}
-                            value={this.state.includeOtherArtists}/>
-                    </View>
-                    <View>
-                        <Text style={styles.header}>Public</Text>
-                        <Switch
-                            onValueChange={() => this.setState({isPublic: !this.state.isPublic})}
-                            value={this.state.isPublic}/>
-                        <Text style={styles.header}>Private</Text>
-                    </View>
-                    <View>
-                        <Text style={styles.header}>Shuffle</Text>
-                        <Switch
-                            onValueChange={() => this.setState({doShuffle: !this.state.doShuffle})}
-                            value={this.state.doShuffle}/>
-                    </View>
-                    <Text>Title</Text>
-                    <TextInput
-                        underlineColorAndroid='transparent'
-                        placeholder='Playlist title...'
-                        onChangeText={(text) => this.setState({title: text})}/>
-                    <Button title='Create Playlist' onPress={this.handleSubmit} />
-                </ScrollView>
+                <View style={styles.rootContainer}>
+                    <Overlay
+                        isVisible={this.state.submitSuccessful}>
+                        <Text>Success!</Text>
+                        <Button
+                            title='Go to Home'
+                            onPress={() => navigate('App')} />
+                    </Overlay>
+                    <Overlay
+                        isVisible={this.state.submitFail}>
+                        <Text>Fail!</Text>
+                        <Button
+                            title='Close'
+                            onPress={() => this.setState({submitFail: !this.state.submitFail})} />
+                    </Overlay>
+                    <ScrollView style={styles.rootContainer}>
+                        <Image source={{uri: this.artistImageUrl}} style={styles.image} />
+                        <Text>{data.artist.name}</Text>
+                        <Text>{data.eventDate} * {data.venue.name}</Text>
+                        <Text>{data.venue.city.name}, {data.venue.city.stateCode}, {data.venue.city.country.code}</Text>
+                        <Button
+                            title={this.state.isFavorite ? 'Remove favorite' : 'Add favorite'}
+                            onPress={this.toggleFavorite} />
+                        <View style={styles.separator} />
+                        <Text style={styles.header}>Tracks</Text>
+                        {this._renderTracks(0)}
+                        <Text style={styles.header}>Encore</Text>
+                        {this._renderTracks(1)}
+                        <View>
+                            <Text>Include other artists at this gig</Text>
+                            <Switch
+                                onValueChange={() => this.setState({includeOtherArtists: !this.state.includeOtherArtists})}
+                                value={this.state.includeOtherArtists}/>
+                        </View>
+                        <View>
+                            <Text style={styles.header}>Public</Text>
+                            <Switch
+                                onValueChange={() => this.setState({isPublic: !this.state.isPublic})}
+                                value={this.state.isPublic}/>
+                            <Text style={styles.header}>Private</Text>
+                        </View>
+                        <View>
+                            <Text style={styles.header}>Shuffle</Text>
+                            <Switch
+                                onValueChange={() => this.setState({doShuffle: !this.state.doShuffle})}
+                                value={this.state.doShuffle}/>
+                        </View>
+                        <Text>Title</Text>
+                        <TextInput
+                            underlineColorAndroid='transparent'
+                            placeholder='Playlist title...'
+                            onChangeText={(text) => this.setState({title: text})}/>
+                        <Button title='Create Playlist' onPress={this.handleSubmit} />
+                    </ScrollView>
+                </View>
                 </KeyboardAvoidingView>
             )
         }

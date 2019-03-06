@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import { View, Image, Text, Button, AsyncStorage } from 'react-native';
-import { LinearGradient } from 'expo';
+import { View, Image, Text, Button, AsyncStorage, TouchableOpacity,
+         ActivityIndicator } from 'react-native';
+import { Font, LinearGradient } from 'expo';
 
 import images from 'res/images';
 import colors from 'res/colors';
@@ -12,6 +13,9 @@ import StreamingFactory from 'library/factories/StreamingFactory';
 export default class AuthScreen extends Component {
     constructor(props) {
         super(props);
+    }
+
+    componentDidMount() {
     }
 
     setStreamingService = async (service) => {
@@ -27,7 +31,6 @@ export default class AuthScreen extends Component {
 
     render() {
         return (
-            <View style={styles.rootContainer}>
                 <LinearGradient
                     colors={[colors.black, colors.navyblue]}
                     style={styles.gradientContainer}>
@@ -35,12 +38,27 @@ export default class AuthScreen extends Component {
                         source={images.turnover}
                         style={styles.image}
                     />
-                    <Button
-                        title={strings.spotify}
-                        onPress={() => {this.setStreamingService('spotify')}}
-                    />
+                    <Text style={[styles.title, {fontFamily: 'bad-script-regular'}]}>GigBud</Text>
+                    <View style={styles.infoBlock}>
+                        <Text style={styles.info}>Please login to begin</Text>
+                    </View>
+                    <View style={styles.buttonBlock}>
+                        <TouchableOpacity
+                            onPress={() => {this.setStreamingService('spotify')}}
+                            style={styles.spotifyBtn}>
+                            <LinearGradient
+                                colors={[colors.teal, colors.seafoam]}
+                                style={styles.buttonGradient}
+                                start={[1, 0]}
+                                end={[0, 1]}>
+                                    <Image
+                                        source={images.spotifyIcon}
+                                        style={styles.spotifyIcon} />
+                                    <Text style={styles.btnText}>{strings.spotify}</Text>
+                            </LinearGradient>
+                        </TouchableOpacity>
+                    </View>
                 </LinearGradient>
-            </View>
         )
     }
 }

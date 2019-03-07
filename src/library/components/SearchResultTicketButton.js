@@ -64,13 +64,17 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: 'row',
         height: '100%',
-        width: '100%'
+        width: '100%',
+        marginTop: 10,
+        marginBottom: 10,
     },
     parentDisabled: {
         flex: 1,
         flexDirection: 'row',
         height: '100%',
         width: '100%',
+        marginTop: 10,
+        marginBottom: 10,
         opacity: 0.7
     },
     gradientStyle: {
@@ -78,6 +82,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         height: '100%',
         width: '100%',
+        borderRadius: 5,
     },
     date: {
         flexWrap: 'wrap',

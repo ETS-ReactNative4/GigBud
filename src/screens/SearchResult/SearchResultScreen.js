@@ -1,13 +1,15 @@
 import React, { Component } from 'react';
 import { FlatList, ScrollView, View, Image, Text, Button,
          ActivityIndicator, AsyncStorage } from 'react-native';
-import { SecureStore } from 'expo';
+import { SearchBar } from 'react-native-elements';
+import { LinearGradient, SecureStore } from 'expo';
 
 import SearchResultTicketButton from 'library/components/SearchResultTicketButton';
 import { UrlFormat } from 'library/utils/functions';
 import StreamingFactory from 'library/factories/StreamingFactory';
 import constants from 'library/utils/constants';
 import colors from 'res/colors';
+import strings from 'res/strings';
 import styles from './styles';
 
 export default class SearchResultsScreen extends Component {
@@ -19,7 +21,7 @@ export default class SearchResultsScreen extends Component {
             data: [],
             pageCounter: 1,
             status: 0,
-            imageUrl: ''
+            imageUrl: '',
         }
     }
 
@@ -105,19 +107,25 @@ export default class SearchResultsScreen extends Component {
                 )
             }
             return (
-                <View style={styles.rootContainer}>
-                    <Image source={{uri: this.state.imageUrl}} style={styles.image} />
-                    <FlatList
-                        style={styles.parent}
-                        data={this.state.data}
-                        onEndReachedThreshold={0.5}
-                        onEndReached={() => {
-                            this.loadMore()
-                        }}
-                        renderItem={({item}) => <SearchResultTicketButton data={item}/>}
-                        keyExtractor={item => item.id}
-                    />
-                </View>
+                    <LinearGradient
+                        colors={[colors.pink, colors.navyblue]}
+                        style={styles.gradientContainer}
+                        start={[1, 0]}
+                        end={[0, 1]}>
+                        <Image
+                            source={{uri: this.state.imageUrl}}
+                            style={styles.image} />
+                        <FlatList
+                            style={styles.flatlist}
+                            data={this.state.data}
+                            onEndReachedThreshold={0.5}
+                            onEndReached={() => {
+                                this.loadMore()
+                            }}
+                            renderItem={({item}) => <SearchResultTicketButton data={item}/>}
+                            keyExtractor={item => item.id}
+                        />
+                    </LinearGradient>
             )
         }
     }

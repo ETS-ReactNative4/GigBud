@@ -5,12 +5,20 @@ const styles = StyleSheet.create({
         flex: 1,
         marginTop: '10%',
     },
-    parent: {
-        flex: 1
+    gradientContainer: {
+        flex: 1,
     },
     image: {
-        height: 200,
-        width: 400,
+        marginTop: '15%',
+        height: '25%',
+        width: '85%',
+        alignSelf: 'center',
+        borderRadius: 5,
+    },
+    flatlist: {
+        flex: 1,
+        width: '85%',
+        alignSelf: 'center',
     }
 });
 

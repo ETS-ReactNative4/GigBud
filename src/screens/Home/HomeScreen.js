@@ -3,19 +3,24 @@ import {
     View, Image, Text, Button, TextInput, AsyncStorage,
     ScrollView, FlatList, ActivityIndicator
 } from 'react-native';
+import { Header, SearchBar } from 'react-native-elements';
+import { LinearGradient } from 'expo';
 import {createDrawerNavigator, createAppContainer} from 'react-navigation';
 
 import SearchResultTicketButton from 'library/components/SearchResultTicketButton';
-import SearchInput from 'components/SearchInput';
 import styles from './styles';
 import constants from 'utils/constants';
 import colors from 'res/colors';
+import strings from 'res/strings';
 
 export default class HomeScreen extends Component {
     constructor(props) {
         super(props);
 
-        this.state = {isLoading: true, pastPlaylists: []};
+        this.state = {isLoading: true, pastPlaylists: [], search: ''};
+
+        this.handleChange = this.handleChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
     }
 
     componentDidMount() {
@@ -29,6 +34,20 @@ export default class HomeScreen extends Component {
             this.setState({isLoading: false, pastPlaylists: JSON.parse(p)});
         } else {
             this.setState({isLoading: false});
+        }
+    }
+
+    handleChange(text) {
+        this.setState({search: text});
+    }
+
+    handleSubmit(event) {
+        if(this.state.search.trim() === '') {
+            // alert
+        } else {
+            this.props.navigation.navigate('Results', {
+                searchValue: this.state.search
+            });
         }
     }
 
@@ -49,18 +68,32 @@ export default class HomeScreen extends Component {
             )
         }
         return (
-            <ScrollView style={styles.rootContainer}>
-                <SearchInput />
-                <FlatList
-                    style={styles.parent}
-                    data={this.state.pastPlaylists}
-                    onEndReachedThreshold={0.5}
-                    onEndReached={() => {
-                        this.loadMore()
-                    }}
-                    renderItem={({item}) => <SearchResultTicketButton data={item}/>}
-                />
-            </ScrollView>
+            <View style={styles.rootContainer}>
+                <LinearGradient
+                    colors={[colors.pink, colors.navyblue]}
+                    style={styles.gradientContainer}
+                    start={[1, 0]}
+                    end={[0, 1]}>
+                    <ScrollView style={styles.scrollContainer}>
+                        <SearchBar
+                            containerStyle={styles.searchContainer}
+                            placeholder={strings.searchPlaceholder}
+                            onChangeText={this.handleChange}
+                            value={this.state.search}
+                            onSubmitEditing={this.handleSubmit}
+                        />
+                        <FlatList
+                            style={styles.flatlist}
+                            data={this.state.pastPlaylists}
+                            onEndReachedThreshold={0.5}
+                            onEndReached={() => {
+                                this.loadMore()
+                            }}
+                            renderItem={({item}) => <SearchResultTicketButton data={item}/>}
+                        />
+                    </ScrollView>
+                </LinearGradient>
+            </View>
         )
     }
 

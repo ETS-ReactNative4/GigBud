@@ -47,7 +47,12 @@ class SearchInput extends Component {
                     onChangeText={this.handleChange}
                     onSubmitEditing={this.handleSubmit}
                 />
-                <FontAwesome name='search' size={50} />
+                <Button
+                    title=''
+                    type='clear'
+                    icon={
+                        <FontAwesome name='search' size={40} />
+                    }/>
             </View>
         );
     }
@@ -58,9 +63,13 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: 'row',
         height: '100%',
-        width: '100%'
+        width: '100%',
+        borderRadius: 10,
+        backgroundColor: '#9096a0'
     },
     input: {
+        marginLeft: '2%',
+        color: 'black',
         width: '75%'
     },
     btn: {

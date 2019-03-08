@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import {
     View, Image, Text, Button, TextInput, AsyncStorage,
-    ScrollView, FlatList, ActivityIndicator
+    ScrollView, FlatList, ActivityIndicator,
+    KeyboardAvoidingView
 } from 'react-native';
 import { Header, SearchBar } from 'react-native-elements';
 import { LinearGradient } from 'expo';
@@ -9,6 +10,7 @@ import {createDrawerNavigator, createAppContainer} from 'react-navigation';
 
 import SearchResultTicketButton from 'library/components/SearchResultTicketButton';
 import GradientBackground from 'library/components/GradientBackground';
+import Loader from 'library/components/Loader';
 import styles from './styles';
 import constants from 'utils/constants';
 import colors from 'res/colors';
@@ -56,11 +58,7 @@ export default class HomeScreen extends Component {
         if(this.state.isLoading) {
             return (
                 <GradientBackground colors={[colors.pink, colors.navyblue]}>
-                    <View style={styles.loaderContainer}>
-                        <ActivityIndicator
-                            size='large'
-                            color={colors.black} />
-                    </View>
+                    <Loader />
                 </GradientBackground>
             )
         }
@@ -79,6 +77,7 @@ export default class HomeScreen extends Component {
             )
         }
         return (
+            <KeyboardAvoidingView style={styles.rootContainer} behavior='padding' enabled>
             <View style={styles.rootContainer}>
                 <GradientBackground colors={[colors.pink, colors.navyblue]}>
                     <ScrollView style={styles.scrollContainer}>
@@ -101,6 +100,7 @@ export default class HomeScreen extends Component {
                     </ScrollView>
                 </GradientBackground>
             </View>
+            </KeyboardAvoidingView>
         )
     }
 

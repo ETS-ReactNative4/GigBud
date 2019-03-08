@@ -6,6 +6,7 @@ import { LinearGradient, SecureStore } from 'expo';
 
 import SearchResultTicketButton from 'library/components/SearchResultTicketButton';
 import GradientBackground from 'library/components/GradientBackground';
+import Loader from 'library/components/Loader';
 import { UrlFormat } from 'library/utils/functions';
 import StreamingFactory from 'library/factories/StreamingFactory';
 import constants from 'library/utils/constants';
@@ -97,11 +98,7 @@ export default class SearchResultsScreen extends Component {
         if(this.state.isLoading) {
             return (
                 <GradientBackground colors={[colors.pink, colors.navyblue]}>
-                    <View style={styles.loaderContainer}>
-                    <ActivityIndicator
-                        size='large'
-                        color={colors.black} />
-                    </View>
+                    <Loader />
                 </GradientBackground>
             )
         } else {
@@ -129,7 +126,8 @@ export default class SearchResultsScreen extends Component {
                     <GradientBackground colors={[colors.pink, colors.navyblue]}>
                         <Image
                             source={{uri: this.state.imageUrl}}
-                            style={styles.image} />
+                            style={styles.image}
+                            resizeMode='cover' />
                         <FlatList
                             style={styles.flatlist}
                             data={this.state.data}

@@ -5,11 +5,13 @@ import { SearchBar } from 'react-native-elements';
 import { LinearGradient, SecureStore } from 'expo';
 
 import SearchResultTicketButton from 'library/components/SearchResultTicketButton';
+import GradientBackground from 'library/components/GradientBackground';
 import { UrlFormat } from 'library/utils/functions';
 import StreamingFactory from 'library/factories/StreamingFactory';
 import constants from 'library/utils/constants';
 import colors from 'res/colors';
 import strings from 'res/strings';
+import images from 'res/images';
 import styles from './styles';
 
 export default class SearchResultsScreen extends Component {
@@ -94,24 +96,37 @@ export default class SearchResultsScreen extends Component {
     render() {
         if(this.state.isLoading) {
             return (
-                <View>
-                    <ActivityIndicator size='large' color={colors.black} />
-                </View>
+                <GradientBackground colors={[colors.pink, colors.navyblue]}>
+                    <View style={styles.loaderContainer}>
+                    <ActivityIndicator
+                        size='large'
+                        color={colors.black} />
+                    </View>
+                </GradientBackground>
             )
         } else {
             if(this.state.status === 404) {
                 return(
-                    <View style={styles.rootContainer}>
-                        <Text> Cannot find {this.props.navigation.getParam('searchValue', null)} </Text>
-                    </View>
+                    <GradientBackground colors={[colors.pink, colors.red]}>
+                        <Text style={styles.errorTitle}>Oops!</Text>
+                        <Image
+                            source={images.mp3error}
+                            style={styles.errorImage}
+                            resizeMode='contain'/>
+                        <View style={styles.errorTextContainer}>
+                            <Text style={styles.errorText}>
+                            <Text style={styles.errorText}>Your search</Text>
+                            <Text style={[styles.bold, styles.errorText]}>
+                                {' ' + this.props.navigation.getParam('searchValue', null)}
+                            </Text>
+                            <Text style={styles.errorText}> did not return any search results!</Text>
+                            </Text>
+                        </View>
+                    </GradientBackground>
                 )
             }
             return (
-                    <LinearGradient
-                        colors={[colors.pink, colors.navyblue]}
-                        style={styles.gradientContainer}
-                        start={[1, 0]}
-                        end={[0, 1]}>
+                    <GradientBackground colors={[colors.pink, colors.navyblue]}>
                         <Image
                             source={{uri: this.state.imageUrl}}
                             style={styles.image} />
@@ -125,7 +140,7 @@ export default class SearchResultsScreen extends Component {
                             renderItem={({item}) => <SearchResultTicketButton data={item}/>}
                             keyExtractor={item => item.id}
                         />
-                    </LinearGradient>
+                    </GradientBackground>
             )
         }
     }

@@ -1,6 +1,12 @@
 import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
+    loaderContainer: {
+        height: '100%',
+        width: '100%',
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
     rootContainer: {
         flex: 1,
     },
@@ -20,8 +26,8 @@ const styles = StyleSheet.create({
     },
     flatlist: {
         flex: 1,
-        marginTop: '20%',
-        width: '75%',
+        marginTop: '10%',
+        width: '85%',
         alignSelf: 'center',
     },
 });

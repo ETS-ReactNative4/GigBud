@@ -165,6 +165,11 @@ export default class SpotifyService {
 		let token = await RequestTokenFromRefresh(this.refreshToken, this.id, this.secret)
 		// Search artist and return image url
 		let artistJson = await SearchArtist(token, artistName);
-        return artistJson.artists.items[0].images[1].url;
+		// could not find artist
+		if(artistJson.artists.items.length === 0) {
+			return '';
+		} else {
+			return artistJson.artists.items[0].images[1].url;
+		}
 	}
 }

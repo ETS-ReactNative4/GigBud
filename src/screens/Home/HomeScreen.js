@@ -8,6 +8,7 @@ import { LinearGradient } from 'expo';
 import {createDrawerNavigator, createAppContainer} from 'react-navigation';
 
 import SearchResultTicketButton from 'library/components/SearchResultTicketButton';
+import GradientBackground from 'library/components/GradientBackground';
 import styles from './styles';
 import constants from 'utils/constants';
 import colors from 'res/colors';
@@ -54,26 +55,32 @@ export default class HomeScreen extends Component {
     render() {
         if(this.state.isLoading) {
             return (
-                <View>
-                    <ActivityIndicator size='large' color={colors.black} />
-                </View>
+                <GradientBackground colors={[colors.pink, colors.navyblue]}>
+                    <View style={styles.loaderContainer}>
+                        <ActivityIndicator
+                            size='large'
+                            color={colors.black} />
+                    </View>
+                </GradientBackground>
             )
         }
         if(this.state.pastPlaylists.length == 0) {
             return (
                 <View style={styles.rootContainer}>
-                    <SearchInput />
-                    <Text>You have not made any playlists yet! Search for an artist to begin making playlists.</Text>
+                    <SearchBar
+                        containerStyle={styles.searchContainer}
+                        placeholder={strings.searchPlaceholder}
+                        onChangeText={this.handleChange}
+                        value={this.state.search}
+                        onSubmitEditing={this.handleSubmit} />
+                    <Text>You have not made any playlists yet!
+                        Search for an artist to begin making playlists.</Text>
                 </View>
             )
         }
         return (
             <View style={styles.rootContainer}>
-                <LinearGradient
-                    colors={[colors.pink, colors.navyblue]}
-                    style={styles.gradientContainer}
-                    start={[1, 0]}
-                    end={[0, 1]}>
+                <GradientBackground colors={[colors.pink, colors.navyblue]}>
                     <ScrollView style={styles.scrollContainer}>
                         <SearchBar
                             containerStyle={styles.searchContainer}
@@ -92,7 +99,7 @@ export default class HomeScreen extends Component {
                             renderItem={({item}) => <SearchResultTicketButton data={item}/>}
                         />
                     </ScrollView>
-                </LinearGradient>
+                </GradientBackground>
             </View>
         )
     }

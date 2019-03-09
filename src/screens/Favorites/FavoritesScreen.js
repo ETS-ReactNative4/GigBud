@@ -1,15 +1,32 @@
 import React, { Component } from 'react';
 import { View, Image, Text, Button, ActivityIndicator,
-         AsyncStorage } from 'react-native';
+         AsyncStorage, FlatList, ScrollView } from 'react-native';
+import { LinearGradient } from 'expo';
 
+import GradientBackground from 'library/components/GradientBackground';
 import SearchResultTicketButton from 'library/components/SearchResultTicketButton';
+import Loader from 'library/components/Loader';
 import constants from 'library/utils/constants';
 import colors from 'res/colors';
+import styles from './styles';
 
 export default class FavoritesScreen extends Component {
+    static navigationOptions = {
+        headerBackground: (
+            <LinearGradient
+                colors={[colors.black, colors.navyblue]}
+                style={{ flex: 1, opacity: 0.85}}
+                start={[1, 0]}
+                end={[0, 1]}
+            />
+        ),
+        headerTitle: 'Favorites',
+        headerTitleStyle: { flex: 1, color: 'white', textAlign: 'center' }
+    };
+
     constructor(props) {
         super(props);
-        this.state = {isLoading: true};
+        this.state = {isLoading: true, favoriteSetlists: []};
     }
 
     componentDidMount() {
@@ -21,7 +38,7 @@ export default class FavoritesScreen extends Component {
     getFavoriteSetlists = async () => {
         let setlists = await AsyncStorage.getItem(constants.favoriteSetlists);
         if(setlists != null) {
-            this.setlists = JSON.parse(setlists);
+            this.setState({favoriteSetlists: JSON.parse(setlists)});
         } else {
             this.setlists = [];
         }
@@ -31,34 +48,33 @@ export default class FavoritesScreen extends Component {
         const {navigate} = this.props.navigation;
         if(this.state.isLoading) {
             return (
-                <View>
-                    <ActivityIndicator size='large' color={colors.black} />
-                </View>
+                <GradientBackground colors={[colors.pink, colors.navyblue]}>
+                    <Loader />
+                </GradientBackground>
             )
         }
 
         return (
-            <View>
-                <Text>Favorites screen</Text>
-                <Button
-                    title="Go to home"
-                    onPress={() => navigate('Home')}
-                />
-                {this._renderFavorites()}
-            </View>
-        );
+            <GradientBackground colors={[colors.pink, colors.navyblue]}>
+                <ScrollView>
+                    <Text style={styles.title}>Setlists you love</Text>
+                    <FlatList
+                        style={styles.flatlist}
+                        data={this.state.favoriteSetlists}
+                        onEndReachedThreshold={0.5}
+                        onEndReached={() => {
+                            this.loadMore()
+                        }}
+                        renderItem={({item}) =>
+                            <SearchResultTicketButton data={item} />
+                        }
+                    />
+                </ScrollView>
+            </GradientBackground>
+        )
     }
 
-    _renderFavorites() {
-        // TODO: render SearchResultTicketButton for each setlist
-        let setlists = [];
-        for(var i = 0; i < this.setlists.length; i++) {
-            setlists.push(
-                <SearchResultTicketButton
-                    key={'row-' + i}
-                    data={this.setlists[i]} />
-            );
-        }
-        return setlists;
+    loadMore = async () => {
+        return null;
     }
 }

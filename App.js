@@ -85,15 +85,32 @@ const SearchStack = createStackNavigator(
     },
     {
         initialRouteName: 'Home',
-        headerMode: 'none'
+    }
+)
+
+const FavoriteStack = createStackNavigator(
+    {
+        Favorites: FavoritesScreen
+    },
+    {
+        initialRouteName: 'Favorites'
+    }
+)
+
+const ProfileStack = createStackNavigator(
+    {
+        Profile: ProfileScreen
+    },
+    {
+        initialRouteName: 'Profile'
     }
 )
 
 const AppStack = createBottomTabNavigator(
     {
         Home: SearchStack,
-        Favorites: FavoritesScreen,
-        Profile: ProfileScreen,
+        Favorites: FavoriteStack,
+        Profile: ProfileStack,
     },
     {
         tabBarOptions: {

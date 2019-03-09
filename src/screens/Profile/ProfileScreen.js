@@ -1,9 +1,13 @@
 import React, { Component } from 'react';
 import {
     View, Image, Text, Button, AsyncStorage,
-    ActivityIndicator
+    ActivityIndicator, TouchableOpacity
 } from 'react-native';
+import { LinearGradient } from 'expo';
+
 import SearchResultTicketButton from 'library/components/SearchResultTicketButton';
+import GradientBackground from 'library/components/GradientBackground';
+import Loader from 'library/components/Loader';
 
 import StreamingFactory from 'library/factories/StreamingFactory';
 import constants from 'utils/constants';
@@ -11,6 +15,19 @@ import colors from 'res/colors';
 import styles from './styles';
 
 export default class ProfileScreen extends Component {
+    static navigationOptions = {
+        headerBackground: (
+            <LinearGradient
+              colors={[colors.black, colors.navyblue]}
+              style={{ flex: 1, opacity: 0.85 }}
+              start={[1, 0]}
+              end={[0, 1]}
+            />
+        ),
+        headerTitle: 'Profile',
+        headerTitleStyle: { flex: 1, color: 'white', textAlign: 'center' }
+      };
+
     constructor(props) {
         super(props);
 
@@ -102,36 +119,55 @@ export default class ProfileScreen extends Component {
         const {navigate} = this.props.navigation;
         if(this.state.isLoading) {
             return (
-                <View>
-                    <ActivityIndicator size='large' color={colors.black} />
-                </View>
+                <GradientBackground colors={[colors.pink, colors.navyblue]}>
+                    <Loader />
+                </GradientBackground>
             )
         }
+
         if(this.state.pastPlaylists.length == 0) {
             return (
-                <View style={styles.rootContainer}>
-                    <SearchInput />
-                    <Text>You have not made any playlists yet! Search for an artist to begin making playlists.</Text>
-                </View>
+                <GradientBackground colors={[colors.pink, colors.navyblue]}>
+                    <Text>You have not made any playlists yet!
+                        Search for an artist to begin making playlists.
+                    </Text>
+                    <TouchableOpacity
+                        onPress={this.logout}
+                        style={styles.logoutButton}>
+                        <LinearGradient
+                            colors={[colors.red, colors.pink]}
+                            style={styles.buttonGradient}
+                            start={[1, 0]}
+                            end={[0, 1]}>
+                            <Text style={styles.btnText}>Logout</Text>
+                        </LinearGradient>
+                    </TouchableOpacity>
+                </GradientBackground>
             )
         }
 
         return (
-            <View style={styles.rootContainer}>
-
-                <Text>Profile screen</Text>
-
-                <Button
-                    title="Logout"
-                    onPress={this.logout} />
-
-                <View style={styles.parent}>
+            <GradientBackground colors={[colors.pink, colors.navyblue]}>
+                <View style={styles.recentPlaylistsContainer}>
                     {this._renderRecentPlaylists()}
                 </View>
-                <View style={styles.parent}>
+
+                <View style={styles.suggestionsContainer}>
                     {this._renderArtistSuggestions()}
                 </View>
-            </View>
+
+                <TouchableOpacity
+                    onPress={this.logout}
+                    style={styles.logoutButton}>
+                    <LinearGradient
+                        colors={[colors.red, colors.pink]}
+                        style={styles.buttonGradient}
+                        start={[1, 0]}
+                        end={[0, 1]}>
+                        <Text style={styles.btnText}>Logout</Text>
+                    </LinearGradient>
+                </TouchableOpacity>
+            </GradientBackground>
         );
     }
 

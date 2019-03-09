@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
     info: {
         color: 'white',
         flexDirection: 'row',
-        // alignSelf: 'center',
+        textAlign: 'center',
         fontSize: 24,
         fontWeight: 'bold',
     },

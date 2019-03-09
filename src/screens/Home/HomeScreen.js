@@ -17,6 +17,19 @@ import colors from 'res/colors';
 import strings from 'res/strings';
 
 export default class HomeScreen extends Component {
+    static navigationOptions = {
+        headerBackground: (
+            <LinearGradient
+              colors={[colors.black, colors.navyblue]}
+              style={{ flex: 1, opacity: 0.85 }}
+              start={[1, 0]}
+              end={[0, 1]}
+            />
+        ),
+        headerTitle: 'Home',
+        headerTitleStyle: { flex: 1, color: 'white', textAlign: 'center' }
+      };
+
     constructor(props) {
         super(props);
 
@@ -95,7 +108,9 @@ export default class HomeScreen extends Component {
                             onEndReached={() => {
                                 this.loadMore()
                             }}
-                            renderItem={({item}) => <SearchResultTicketButton data={item}/>}
+                            renderItem={({item}) =>
+                                <SearchResultTicketButton data={item} />
+                            }
                         />
                     </ScrollView>
                 </GradientBackground>

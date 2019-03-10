@@ -33,6 +33,16 @@ export default class ProfileScreen extends Component {
         super(props);
 
         this.state = {isLoading: true, pastPlaylists: [], recommendations: []};
+
+        this._isMounted = false;
+    }
+
+    componentWillMount() {
+        this._isMounted = true;
+    }
+
+    componentWillUnmount() {
+        this._isMounted = false;
     }
 
     componentDidMount() {
@@ -42,7 +52,10 @@ export default class ProfileScreen extends Component {
     loadThings = async () => {
         this.getPastPlaylists()
         .then(() => this.getArtistRecommendations())
-        .then(() => this.setState({isLoading: false}));
+        .then(() => {
+            if(this._isMounted)
+                this.setState({isLoading: false}));
+        }
     }
 
     hasBeenLongerThanADay = async () => {
@@ -91,11 +104,13 @@ export default class ProfileScreen extends Component {
             // Save timestamp and artist recommendations to storage
             AsyncStorage.setItem('artistRecsTimeStamp', (Date.now()).toString());
             AsyncStorage.setItem('pastArtistRecommendations', JSON.stringify(actualRecs));
-            this.setState({recommendations: actualRecs});
+            if(this._isMounted)
+                this.setState({recommendations: actualRecs});
         } else {
             // use past recs
             let pastRecs = await AsyncStorage.getItem('pastArtistRecommendations');
-            this.setState({recommendations: JSON.parse(pastRecs)});
+            if(this._isMounted)
+                this.setState({recommendations: JSON.parse(pastRecs)});
         }
     }
 
@@ -103,7 +118,8 @@ export default class ProfileScreen extends Component {
         this.prefService = await AsyncStorage.getItem(constants.local_streaming_service);
         let p = await AsyncStorage.getItem(constants.pastPlaylists);
         if(p != null) {
-            this.setState({pastPlaylists: JSON.parse(p)});
+            if(this._isMounted)
+                this.setState({pastPlaylists: JSON.parse(p)});
         }
     }
 

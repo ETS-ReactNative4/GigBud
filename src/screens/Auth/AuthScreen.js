@@ -13,6 +13,16 @@ import StreamingFactory from 'library/factories/StreamingFactory';
 export default class AuthScreen extends Component {
     constructor(props) {
         super(props);
+
+        this._isMounted = false;
+    }
+
+    componentWillMount() {
+        this._isMounted = true;
+    }
+
+    componentWillUnmount() {
+        this._isMounted = false;
     }
 
     componentDidMount() {

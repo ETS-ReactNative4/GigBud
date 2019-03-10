@@ -39,11 +39,22 @@ export default class SearchResultsScreen extends Component {
             status: 0,
             imageUrl: '',
         }
+
+        this._isMounted = false;
+    }
+
+    componentWillMount() {
+        this._isMounted = true;
+    }
+
+    componentWillUnmount() {
+        this._isMounted = false;
     }
 
     componentDidMount() {
         this.loadData().then(() => {
-            this.setState({isLoading: false})
+            if(this._isMounted)
+                this.setState({isLoading: false})
         });
     }
 
@@ -59,7 +70,8 @@ export default class SearchResultsScreen extends Component {
         var factory = new StreamingFactory(prefService);
         var service = factory.createService();
         let imageUrl = await service.GetImageUrl(this.artistName);
-        this.setState({imageUrl: imageUrl});
+        if(this._isMounted)
+            this.setState({imageUrl: imageUrl});
     }
 
     searchForArtist = async () => {
@@ -72,9 +84,10 @@ export default class SearchResultsScreen extends Component {
             let data = await this.doFetch(url, api_key);
             if(data[0] === 200)
                 this.searchForSetlist(data[1].artist[0].mbid);
-            else
-                this.setState({status: data[0]})
-
+            else {
+                if(this._isMounted)
+                    this.setState({status: data[0]})
+            }
         }
     }
 
@@ -85,7 +98,8 @@ export default class SearchResultsScreen extends Component {
         if(data[0] === 200) {
             let oldData = this.state.data;
             data[1].setlist.forEach((setlist) => oldData.push(setlist));
-            this.setState({data: oldData});
+            if(this._isMounted)
+                this.setState({data: oldData});
         }
     }
 
@@ -157,7 +171,8 @@ export default class SearchResultsScreen extends Component {
     }
 
     loadMore = async () => {
-        this.setState({pageCounter: this.state.pageCounter+1});
+        if(this._isMounted)
+            this.setState({pageCounter: this.state.pageCounter+1});
         this.searchForSetlist(this.state.data[0].artist.mbid);
     }
 

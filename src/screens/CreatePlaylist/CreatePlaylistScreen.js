@@ -46,6 +46,16 @@ export default class CreatePlaylistScreen extends Component {
             submitSuccessful: false,
             submitFail: false
         }
+
+        this._isMounted = false;
+    }
+
+    componentWillMount() {
+        this._isMounted = true;
+    }
+
+    componentWillUnmount() {
+        this._isMounted = false;
     }
 
     componentDidMount() {
@@ -86,7 +96,8 @@ export default class CreatePlaylistScreen extends Component {
         // console.log(this.favoriteSetlists);
         if(this.favoriteSetlists == null) {
             this.favoriteSetlists = [];
-            this.setState({isFavorite: false});
+            if(this._isMounted)
+                this.setState({isFavorite: false});
         } else {
             this.favoriteSetlists = JSON.parse(this.favoriteSetlists);
             let isFavorite = false;
@@ -95,7 +106,8 @@ export default class CreatePlaylistScreen extends Component {
                     isFavorite = true;
                 }
             }
-            this.setState({isFavorite: isFavorite});
+            if(this._isMounted)
+                this.setState({isFavorite: isFavorite});
         }
     }
 
@@ -110,7 +122,8 @@ export default class CreatePlaylistScreen extends Component {
             this.trackObjects = result[1];
             this.trackTitles = result[2];
             this.artistImageUrl = result[3];
-            this.setState({isLoading: false});
+            if(this._isMounted)
+                this.setState({isLoading: false});
         } else {
             console.error('Error getting all tracks');
             // error
@@ -126,10 +139,12 @@ export default class CreatePlaylistScreen extends Component {
         if(result === 'OK') {
             // popup modal or navigate to success screen
             this.addToPastPlaylists();
-            this.setState({submitSuccessful: true});
+            if(this._isMounted)
+                this.setState({submitSuccessful: true});
         } else {
             // popup modal error? - display error description
-            this.setState({submitFail: true})
+            if(this._isMounted)
+                this.setState({submitFail: true})
         }
         this.props.navigation.navigate('App');
     }
@@ -175,7 +190,8 @@ export default class CreatePlaylistScreen extends Component {
             this.favoriteSetlists.unshift(this.state.data);
         }
         AsyncStorage.setItem(constants.favoriteSetlists, JSON.stringify(this.favoriteSetlists));
-        this.setState({isFavorite: !this.state.isFavorite});
+        if(this._isMounted)
+            this.setState({isFavorite: !this.state.isFavorite});
     }
 
     render() {

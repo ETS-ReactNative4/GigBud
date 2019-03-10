@@ -27,18 +27,30 @@ export default class FavoritesScreen extends Component {
     constructor(props) {
         super(props);
         this.state = {isLoading: true, favoriteSetlists: []};
+
+        this._isMounted = false;
+    }
+
+    componentWillMount() {
+        this._isMounted = true;
+    }
+
+    componentWillUnmount() {
+        this._isMounted = false;
     }
 
     componentDidMount() {
         this.getFavoriteSetlists().then(() => {
-            this.setState({isLoading: false});
+            if(this._isMounted)
+                this.setState({isLoading: false});
         });
     }
 
     getFavoriteSetlists = async () => {
         let setlists = await AsyncStorage.getItem(constants.favoriteSetlists);
         if(setlists != null) {
-            this.setState({favoriteSetlists: JSON.parse(setlists)});
+            if(this._isMounted)
+                this.setState({favoriteSetlists: JSON.parse(setlists)});
         } else {
             this.setlists = [];
         }

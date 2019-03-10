@@ -37,6 +37,16 @@ export default class HomeScreen extends Component {
 
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+
+        this._isMounted = false;
+    }
+
+    componentWillMount() {
+        this._isMounted = true;
+    }
+
+    componentWillUnmount() {
+        this._isMounted = false;
     }
 
     componentDidMount() {
@@ -47,9 +57,11 @@ export default class HomeScreen extends Component {
         let p = await AsyncStorage.getItem(constants.pastPlaylists);
         console.log(JSON.parse(p));
         if(p != null) {
-            this.setState({isLoading: false, pastPlaylists: JSON.parse(p)});
+            if(this._isMounted)
+                this.setState({isLoading: false, pastPlaylists: JSON.parse(p)});
         } else {
-            this.setState({isLoading: false});
+            if(this._isMounted)
+                this.setState({isLoading: false});
         }
     }
 

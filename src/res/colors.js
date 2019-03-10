@@ -2,6 +2,7 @@ const colors = {
     white: '#ffffff',
     blue: '#5B68FF',
     black: '#373B44',
+    activeBlack: '#616877',
     skyblue: '#7FF0FF',
     navyblue: '#07337A',
     pink: '#FF7F7F',

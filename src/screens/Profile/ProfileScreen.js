@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import {
     View, Image, Text, Button, AsyncStorage,
-    ActivityIndicator, TouchableOpacity
+    ActivityIndicator, TouchableOpacity, FlatList,
+    ListView
 } from 'react-native';
 import { LinearGradient } from 'expo';
 
@@ -31,11 +32,7 @@ export default class ProfileScreen extends Component {
     constructor(props) {
         super(props);
 
-        this.state = {isLoading: true, pastPlaylists: []};
-    }
-
-    componentWillMount() {
-
+        this.state = {isLoading: true, pastPlaylists: [], recommendations: []};
     }
 
     componentDidMount() {
@@ -149,24 +146,30 @@ export default class ProfileScreen extends Component {
         return (
             <GradientBackground colors={[colors.pink, colors.navyblue]}>
                 <View style={styles.recentPlaylistsContainer}>
+                    <Text style={styles.centeredText}>Your most recent playlists</Text>
                     {this._renderRecentPlaylists()}
                 </View>
 
                 <View style={styles.suggestionsContainer}>
-                    {this._renderArtistSuggestions()}
+                    <Text style={styles.centeredText}>Artist recommendations</Text>
+                    <View style={styles.suggestions}>
+                        {this._renderArtistSuggestions()}
+                    </View>
                 </View>
 
-                <TouchableOpacity
-                    onPress={this.logout}
-                    style={styles.logoutButton}>
-                    <LinearGradient
-                        colors={[colors.red, colors.pink]}
-                        style={styles.buttonGradient}
-                        start={[1, 0]}
-                        end={[0, 1]}>
-                        <Text style={styles.btnText}>Logout</Text>
-                    </LinearGradient>
-                </TouchableOpacity>
+                <View style={styles.buttonContainer}>
+                    <TouchableOpacity
+                        onPress={this.logout}
+                        style={styles.logoutButton}>
+                        <LinearGradient
+                            colors={[colors.red, colors.pink]}
+                            style={styles.buttonGradient}
+                            start={[1, 0]}
+                            end={[0, 1]}>
+                            <Text style={styles.btnText}>Logout</Text>
+                        </LinearGradient>
+                    </TouchableOpacity>
+                </View>
             </GradientBackground>
         );
     }
@@ -189,9 +192,48 @@ export default class ProfileScreen extends Component {
     _renderArtistSuggestions() {
         let recommendations = this.state.recommendations;
         let recs = [];
-        recs.push(<Text key={'recs-' + 0}>{recommendations[0].name} -- {recommendations[0].genre}</Text>);
-        recs.push(<Text key={'recs-' + 1}>{recommendations[1].name} -- {recommendations[1].genre}</Text>);
-        recs.push(<Text key={'recs-' + 2}>{recommendations[2].name} -- {recommendations[2].genre}</Text>);
+        recs.push(
+            <View key={'sug-' + 0} style={styles.suggestionBox}>
+                <Text key={'name-' + 0}
+                    style={[styles.suggestionText, styles.artistName]}
+                    numberOfLines={2}>
+                    {recommendations[0].name}
+                </Text>
+                <Text key={'genre-' + 0}
+                    style={styles.suggestionText}
+                    numberOfLines={2}>
+                    {recommendations[0].genre}
+                </Text>
+            </View>
+        );
+        recs.push(
+            <View key={'sug-' + 1} style={styles.suggestionBox}>
+                <Text key={'name-' + 1}
+                    style={[styles.suggestionText, styles.artistName]}
+                    numberOfLines={2}>
+                    {recommendations[1].name}
+                </Text>
+                <Text key={'genre-' + 1}
+                    style={styles.suggestionText}
+                    numberOfLines={2}>
+                    {recommendations[1].genre}
+                </Text>
+            </View>
+        );
+        recs.push(
+            <View key={'sug-' + 2} style={styles.suggestionBox}>
+                <Text key={'name-' + 2}
+                    style={[styles.suggestionText, styles.artistName]}
+                    numberOfLines={2}>
+                    {recommendations[2].name}
+                </Text>
+                <Text key={'genre-' + 2}
+                    style={styles.suggestionText}
+                    numberOfLines={2}>
+                    {recommendations[2].genre}
+                </Text>
+            </View>
+        );
         return recs;
     }
 }

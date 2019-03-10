@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { ScrollView, View, Image, Text, Button, Switch, TextInput,
          ActivityIndicator, AsyncStorage, Modal,
          KeyboardAvoidingView } from 'react-native';
-import { SecureStore } from 'expo';
+import { LinearGradient, SecureStore } from 'expo';
 import { Overlay } from 'react-native-elements';
 
 import colors from 'res/colors';
@@ -16,6 +16,19 @@ import { RequestTokenFromRefresh, SearchArtist,
 import styles from './styles';
 
 export default class CreatePlaylistScreen extends Component {
+    static navigationOptions = {
+        headerBackground: (
+            <LinearGradient
+              colors={[colors.black, colors.navyblue]}
+              style={{ flex: 1, opacity: 0.85 }}
+              start={[1, 0]}
+              end={[0, 1]}
+            />
+        ),
+        headerTitle: 'Create Playlist',
+        headerTitleStyle: { color: 'white', alignSelf: 'center', textAlign: 'center' }
+      };
+
     constructor(props) {
         super(props);
         this.trackTitles = [];

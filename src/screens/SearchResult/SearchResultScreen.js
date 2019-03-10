@@ -16,6 +16,19 @@ import images from 'res/images';
 import styles from './styles';
 
 export default class SearchResultsScreen extends Component {
+    static navigationOptions = {
+        headerBackground: (
+            <LinearGradient
+              colors={[colors.black, colors.navyblue]}
+              style={{ flex: 1, opacity: 0.85 }}
+              start={[1, 0]}
+              end={[0, 1]}
+            />
+        ),
+        headerTitle: 'Search Results',
+        headerTitleStyle: { color: 'white', alignSelf: 'center', textAlign: 'center' }
+      };
+
     constructor(props) {
         super(props);
         this.artistName = this.props.navigation.getParam('searchValue', null);

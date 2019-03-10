@@ -101,6 +101,7 @@ export default class HomeScreen extends Component {
                             value={this.state.search}
                             onSubmitEditing={this.handleSubmit}
                         />
+                        <Text style={styles.centeredText}>Playlists you've made</Text>
                         <FlatList
                             style={styles.flatlist}
                             data={this.state.pastPlaylists}

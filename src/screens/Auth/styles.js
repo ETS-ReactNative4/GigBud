@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
         color: 'white',
         flexDirection: 'row',
         textAlign: 'center',
-        fontSize: 24,
+        fontSize: 27,
         fontWeight: 'bold',
     },
     buttonBlock: {

@@ -7,14 +7,17 @@ import CreatePlaylistScreen from 'screens/CreatePlaylist/CreatePlaylistScreen';
 import ErrorScreen from 'screens/Error/ErrorScreen';
 import firebase from './src/library/utils/firebase';
 import constants from 'library/utils/constants';
+import colors from 'res/colors';
 
 import React from 'react';
-import { AppRegistry, AsyncStorage } from 'react-native';
+import { AppRegistry, AsyncStorage, View } from 'react-native';
 import {
     createSwitchNavigator, createStackNavigator,
-    createBottomTabNavigator, createAppContainer
+    createBottomTabNavigator, createAppContainer,
+    createMaterialBottomTabNavigator
 } from 'react-navigation';
-import { Font, SecureStore } from 'expo';
+import { Font, SecureStore, LinearGradient } from 'expo';
+import { FontAwesome } from '@expo/vector-icons';
 
 import fonts from 'res/fonts';
 
@@ -114,12 +117,26 @@ const AppStack = createBottomTabNavigator(
     },
     {
         tabBarOptions: {
-            activeTintColor: 'tomato',
-            inactiveTintColor: 'gray',
-        }
+            activeBackgroundColor: 'grey',
+            inactiveBackgroundColor: colors.black,
+            activeTintColor: colors.white,
+            inactiveTintColor: colors.white,
+        },
+        initialRouteName: 'Home'
     }
-
 );
+// const AppStack = createMaterialBottomTabNavigator(
+//     {
+//         Home: SearchStack,
+//         Favorites: FavoriteStack,
+//         Profile: ProfileStack,
+//     },
+//     {
+//         initialRouteName: 'Home',
+//         activeColor: 'grey',
+//         inactiveColor: colors.black,
+//     }
+// )
 
 const AuthStack = createStackNavigator({
     SignIn: AuthScreen

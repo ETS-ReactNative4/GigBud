@@ -1,31 +1,65 @@
 import { StyleSheet } from 'react-native';
+import colors from 'res/colors';
 
 const styles = StyleSheet.create({
     recentPlaylistsContainer: {
-        flex: 1,
-        // flexDirection: 'row',
-        // alignItems: 'center',
-        marginTop: '10%',
+        marginTop: '5%',
+        height: '50%',
+        width: '85%',
+        alignSelf: 'center',
+    },
+    centeredText: {
+        color: 'white',
+        textAlign: 'center',
+        fontSize: 20,
+        fontWeight: 'bold',
     },
     suggestionsContainer: {
         flex: 1,
-        // flexDirection: 'row',
-        // alignItems: 'center',
-        marginTop: '10%',
+        height: '25%',
+        width: '85%',
+        alignSelf: 'center',
+    },
+    suggestions: {
+        flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginTop: '5%',
+    },
+    suggestionBox: {
+        backgroundColor: colors.black,
+        flex: 1,
+        padding: '3%',
+        borderWidth: 1,
+        borderColor: '#000000'
+    },
+    suggestionText: {
+        flex: 1,
+        color: 'white',
+        textAlign: 'center'
+    },
+    artistName: {
+        fontSize: 18,
+        fontWeight: 'bold',
+    },
+    buttonContainer: {
+        flex: 1,
+        marginTop: '5%',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     logoutButton: {
-        flex: 1,
-        alignSelf: 'center',
-        height: '5%',
+        height: '35%',
         width: '65%',
     },
     buttonGradient: {
         borderRadius: 10,
         flex: 1,
+        justifyContent: 'space-around',
     },
     btnText: {
         color: 'white',
-        fontSize: 24,
+        fontSize: 20,
         fontWeight: 'bold',
         alignSelf: 'center',
         textShadowColor: 'rgba(0, 0, 0, 0.75)',

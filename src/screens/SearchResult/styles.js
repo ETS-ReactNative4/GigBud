@@ -2,7 +2,7 @@ import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
     image: {
-        marginTop: '15%',
+        marginTop: '5%',
         height: '25%',
         width: '85%',
         alignSelf: 'center',

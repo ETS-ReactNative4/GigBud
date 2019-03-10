@@ -18,9 +18,14 @@ const styles = StyleSheet.create({
         width: '85%',
         borderRadius: 5
     },
+    centeredText: {
+        color: 'white',
+        textAlign: 'center',
+        fontSize: 20,
+        marginTop: '10%',
+    },
     flatlist: {
         flex: 1,
-        marginTop: '10%',
         width: '85%',
         alignSelf: 'center',
     },

@@ -27,16 +27,48 @@ class TicketButton extends Component {
                     start={[1, 0]}
                     end={[0, 1]}>
                     <View style={styles.date}>
-                        <Text>{date}</Text>
+                        {this._dateDay({date})}
+                        {this._dateMonth({date})}
+                        {this._dateYear({date})}
                     </View>
                     <View style={styles.info}>
-                        <Text>{artist}</Text>
-                        <Text>{venue}</Text>
-                        <Text>{location}</Text>
-                        <Text>{songs} songs</Text>
+                        <Text style={styles.artistName}>{artist}</Text>
+                        <Text style={styles.infoText}>{location}</Text>
+                        
+                        <Text style={styles.infoText}>{songs} songs</Text>
                     </View>
                 </LinearGradient>
             </TouchableOpacity>
+        );
+    }
+
+    _dateDay(date) {
+        let day = date.date.substring(0, 2);
+        return (
+            <View style={styles.dateTextView}>
+                <Text style={styles.dateText}>{day}</Text>
+            </View>
+        );
+    }
+
+    _dateMonth(date) {
+        let months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN',
+                      'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+        let index = date.date.substring(3, 5);
+        let month = months[parseInt(index)-1];
+        return (
+            <View style={styles.dateTextView}>
+                <Text style={styles.dateText}>{month}</Text>
+            </View>
+        );
+    }
+
+    _dateYear(date) {
+        let year = date.date.substring(6);
+        return (
+            <View style={styles.dateTextView}>
+                <Text style={styles.dateText}>{year}</Text>
+            </View>
         );
     }
 
@@ -87,16 +119,37 @@ const styles = StyleSheet.create({
     date: {
         flexWrap: 'wrap',
         fontWeight: 'bold',
-        width: '25%',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        // alignItems: 'center',
+        width: '20%',
         borderRightColor: 'black',
         borderRightWidth: 2,
         opacity: 1
     },
+    dateTextView: {
+        marginLeft: '25%',
+    },
+    dateText: {
+        // marginLeft: '25%',
+        fontSize: 18,
+        fontWeight: 'bold',
+    },
     info: {
+        flex: 1,
         flexDirection: 'column',
+        justifyContent: 'space-between',
         alignItems: 'center',
-        height: '75%',
+        // height: '75%',
+        // width: '75%',
         opacity: 1
+    },
+    artistName: {
+        fontSize: 20,
+        fontWeight: 'bold',
+    },
+    infoText: {
+        fontSize: 16
     }
 });
 

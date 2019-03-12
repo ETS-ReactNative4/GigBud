@@ -23,6 +23,9 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         fontSize: 20,
         marginTop: '10%',
+        textShadowColor: 'rgba(0, 0, 0, 0.75)',
+        textShadowOffset: {width: 1, height: 1},
+        textShadowRadius: 5,
     },
     flatlist: {
         flex: 1,

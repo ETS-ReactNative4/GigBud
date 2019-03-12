@@ -13,6 +13,9 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         fontSize: 20,
         fontWeight: 'bold',
+        textShadowColor: 'rgba(0, 0, 0, 0.75)',
+        textShadowOffset: {width: -1, height: -1},
+        textShadowRadius: 5,
     },
     suggestionsContainer: {
         flex: 1,

@@ -54,8 +54,8 @@ export default class ProfileScreen extends Component {
         .then(() => this.getArtistRecommendations())
         .then(() => {
             if(this._isMounted)
-                this.setState({isLoading: false}));
-        }
+                this.setState({isLoading: false});
+        })
     }
 
     hasBeenLongerThanADay = async () => {

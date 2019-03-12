@@ -9,7 +9,7 @@ const styles = StyleSheet.create({
         fontSize: 32,
         marginTop: '10%',
         textShadowColor: 'rgba(0, 0, 0, 0.75)',
-        textShadowOffset: {width: -1, height: -1},
+        textShadowOffset: {width: 1, height: 1},
         textShadowRadius: 5,
     },
     flatlist: {

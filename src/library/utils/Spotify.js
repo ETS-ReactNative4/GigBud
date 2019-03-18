@@ -223,8 +223,15 @@ async function CreatePlaylist(authToken, userID, title, pub) {
 
 async function AddSongsToPlaylist(authToken, id, tracks) {
     var uris = []
-    for(var track in tracks) {
-        uris.push('spotify:track:' + tracks[track]);
+    if(tracks.length > 99) {
+        for(let i = 0; i < 99; i++) {
+            uris.push('spotify:track:' + tracks[i]);
+        }
+    }
+    else {
+        for(var track in tracks) {
+            uris.push('spotify:track:' + tracks[track]);
+        }
     }
     formBody = 'uris=' + uris;
 
@@ -240,9 +247,11 @@ async function AddSongsToPlaylist(authToken, id, tracks) {
     .then((response) => response.json())
     .then((resJson) => {
         console.log(resJson);
+        return resJson;
     })
     .catch((error) => {
         console.error(error);
+        return error;
     })
 }
 

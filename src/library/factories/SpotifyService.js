@@ -132,9 +132,12 @@ export default class SpotifyService {
         // Create empty playlist
         let playlistID = await CreatePlaylist(token, userID, title, isPublic);
         // Add all songs to the new empty playlist
-        return AddSongsToPlaylist(token, playlistID, trackIDs).then(() => {
-        	return 'OK';
-        });
+        let result = await AddSongsToPlaylist(token, playlistID, trackIDs);
+		if('error' in result) {
+			return 'error';
+		} else {
+			return 'OK';
+		}
 	}
 
 	async getRecommendations(artistNames) {

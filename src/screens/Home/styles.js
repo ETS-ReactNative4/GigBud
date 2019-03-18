@@ -9,14 +9,14 @@ const styles = StyleSheet.create({
     },
     scrollContainer: {
         flex: 1,
-        marginTop: '10%',
     },
     searchContainer: {
         flex: 1,
         flexDirection: 'row',
         alignSelf: 'center',
         width: '85%',
-        borderRadius: 5
+        borderRadius: 5,
+        marginTop: 30,
     },
     input: {
         color: 'white',

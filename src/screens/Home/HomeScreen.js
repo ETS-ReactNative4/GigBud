@@ -55,7 +55,7 @@ export default class HomeScreen extends Component {
 
     getPastPlaylists = async () => {
         let p = await AsyncStorage.getItem(constants.pastPlaylists);
-        console.log(JSON.parse(p));
+        // console.log(JSON.parse(p));
         if(p != null) {
             if(this._isMounted)
                 this.setState({isLoading: false, pastPlaylists: JSON.parse(p)});

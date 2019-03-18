@@ -61,9 +61,10 @@ export default class ProfileScreen extends Component {
     hasBeenLongerThanADay = async () => {
         let result = false;
         let time = await AsyncStorage.getItem('artistRecsTimeStamp');
+        console.log(time);
         if(time != null) {
             let timeNow = Date.now() / 1000; // seconds since UNIX epoch
-            if((timeNow - parseInt(time)) < 86,400) { // (60 secs)*(60 mins)*(24 hr)
+            if((timeNow - (parseInt(time)/1000)) < 86,400) { // (60 secs)*(60 mins)*(24 hr)
                 result = false;
             } else {
                 result = true;

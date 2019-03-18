@@ -112,6 +112,7 @@ export default class HomeScreen extends Component {
                             onChangeText={this.handleChange}
                             value={this.state.search}
                             onSubmitEditing={this.handleSubmit}
+                            inputStyle={styles.input}
                         />
                         <Text style={styles.centeredText}>Playlists you've made</Text>
                         <FlatList

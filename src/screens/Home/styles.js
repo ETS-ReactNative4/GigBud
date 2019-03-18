@@ -18,6 +18,9 @@ const styles = StyleSheet.create({
         width: '85%',
         borderRadius: 5
     },
+    input: {
+        color: 'white',
+    },
     centeredText: {
         color: 'white',
         textAlign: 'center',

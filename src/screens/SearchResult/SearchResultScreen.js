@@ -95,11 +95,15 @@ export default class SearchResultsScreen extends Component {
         let api_key = await SecureStore.getItemAsync(constants.local_setlist_fm);
         var url = UrlFormat(constants.setlist_fm_search_setlists, mbid, this.state.pageCounter);
         let data = await this.doFetch(url, api_key);
+        console.log(data);
         if(data[0] === 200) {
             let oldData = this.state.data;
             data[1].setlist.forEach((setlist) => oldData.push(setlist));
             if(this._isMounted)
                 this.setState({data: oldData});
+        } else {
+            if(this._isMounted)
+                this.setState({status: data[0]});
         }
     }
 

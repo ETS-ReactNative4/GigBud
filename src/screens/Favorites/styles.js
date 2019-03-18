@@ -15,10 +15,11 @@ const styles = StyleSheet.create({
     flatlist: {
         flex: 1,
         marginTop: '10%',
+        marginBottom: '10%',
         paddingLeft: '5%',
         paddingTop: '5%',
         paddingRight: '5%',
-        paddingBottom: '15%',
+        paddingBottom: '5%',
         width: '85%',
         alignSelf: 'center',
         backgroundColor: colors.activeBlack,

@@ -1,12 +1,15 @@
 import React, { Component } from 'react';
-import { ScrollView, View, Image, Text, Button, Switch, TextInput,
+import { ScrollView, View, Image, Text, Switch, TextInput,
          ActivityIndicator, AsyncStorage, Modal,
-         KeyboardAvoidingView } from 'react-native';
+         KeyboardAvoidingView, TouchableOpacity } from 'react-native';
 import { LinearGradient, SecureStore } from 'expo';
-import { Overlay } from 'react-native-elements';
+import { FontAwesome } from '@expo/vector-icons';
+import { Overlay, Button } from 'react-native-elements';
 
 import colors from 'res/colors';
 import constants from 'library/utils/constants';
+import GradientBackground from 'library/components/GradientBackground';
+import Loader from 'library/components/Loader';
 import StreamingFactory from 'library/factories/StreamingFactory';
 import PlaylistTrack from 'components/PlaylistTrack';
 import { UrlFormat, GetOtherArtists } from 'library/utils/functions';
@@ -43,6 +46,7 @@ export default class CreatePlaylistScreen extends Component {
             doShuffle: false,
             isFavorite: false,
             title: '',
+            submitLoading: false,
             submitSuccessful: false,
             submitFail: false
         }
@@ -131,6 +135,8 @@ export default class CreatePlaylistScreen extends Component {
     }
 
     handleSubmit = async () => {
+        if(this._isMounted)
+            this.setState({submitLoading: true})
         let result = await this.serviceType.handleSubmit(this.playlistTracks, this.trackObjects,
                         this.state.title, this.state.isPublic, this.state.doShuffle,
                         this.state.includeOtherArtists, this.otherArtists);
@@ -140,11 +146,11 @@ export default class CreatePlaylistScreen extends Component {
             // popup modal or navigate to success screen
             this.addToPastPlaylists();
             if(this._isMounted)
-                this.setState({submitSuccessful: true});
+                this.setState({submitSuccessful: true, submitLoading: false});
         } else {
             // popup modal error? - display error description
             if(this._isMounted)
-                this.setState({submitFail: true})
+                this.setState({submitFail: true, submitLoading: false})
         }
         this.props.navigation.navigate('App');
     }
@@ -200,69 +206,120 @@ export default class CreatePlaylistScreen extends Component {
         this.playlistTracks = [];
         if(this.state.isLoading) {
             return (
-                <View>
-                    <ActivityIndicator size='large' color={colors.black} />
-                </View>
+                <GradientBackground colors={[colors.pink, colors.navyblue]}>
+                    <Loader />
+                </GradientBackground>
             )
         } else {
             return (
-                <KeyboardAvoidingView style={styles.rootContainer} behavior='padding' enabled>
-                <View style={styles.rootContainer}>
-                    <Overlay
-                        isVisible={this.state.submitSuccessful}>
-                        <Text>Success!</Text>
-                        <Button
-                            title='Go to Home'
-                            onPress={() => navigate('App')} />
-                    </Overlay>
-                    <Overlay
-                        isVisible={this.state.submitFail}>
-                        <Text>Fail!</Text>
-                        <Button
-                            title='Close'
-                            onPress={() => this.setState({submitFail: !this.state.submitFail})} />
-                    </Overlay>
-                    <ScrollView style={styles.rootContainer}>
-                        <Image source={{uri: this.artistImageUrl}} style={styles.image} />
-                        <Text>{data.artist.name}</Text>
-                        <Text>{data.eventDate} * {data.venue.name}</Text>
-                        <Text>{data.venue.city.name}, {data.venue.city.stateCode}, {data.venue.city.country.code}</Text>
-                        <Button
-                            title={this.state.isFavorite ? 'Remove favorite' : 'Add favorite'}
-                            onPress={this.toggleFavorite} />
+                <GradientBackground colors={[colors.pink, colors.navyblue]}>
+
+                    <View style={styles.rootContainer}>
+                    <KeyboardAvoidingView style={styles.rootContainer}
+                        keyboardVerticalOffset={100} behavior='padding' enabled>
+                        <Overlay
+                            isVisible={this.state.submitLoading}
+                            height='25%' >
+                            <Loader />
+                        </Overlay>
+                        <Overlay
+                            isVisible={this.state.submitSuccessful}
+                            height='25%' >
+                            <View style={styles.submitOverlayContainer}>
+                                <Text style={styles.overlayText}>Success!</Text>
+                                <Text style={styles.overlayText}>Your playlist has been made!</Text>
+                                <Button
+                                    title='Go to Home'
+                                    onPress={() => navigate('Home')} />
+                            </View>
+                        </Overlay>
+                        <Overlay
+                            isVisible={this.state.submitFail}
+                            height='25%' >
+                            <View style={styles.submitOverlayContainer}>
+                                <Text style={styles.overlayText}>An error has occurred!</Text>
+                                <Text style={styles.overlayText}>Please try again.</Text>
+                                <Button
+                                    title='Close'
+                                    onPress={() => this.setState({submitFail: !this.state.submitFail})} />
+                            </View>
+                        </Overlay>
+                        <Image
+                            source={{uri: this.artistImageUrl}}
+                            style={styles.image}
+                            resizeMode='cover' />
+                        <View style={styles.underImageContainer}>
+                            <View style={styles.infoContainer}>
+                                <Text style={styles.artistName}>{data.artist.name}</Text>
+                                <Text style={styles.venue}>{data.eventDate} * {data.venue.name}</Text>
+                                <Text style={styles.location}>{data.venue.city.name}, {data.venue.city.stateCode}, {data.venue.city.country.code}</Text>
+                            </View>
+                            <Button
+                                title=''
+                                icon={!this.state.isFavorite ?
+                                    <FontAwesome name='star-o' size={30} color='white' />
+                                    : <FontAwesome name='star' size={30} color='yellow' />
+                                }
+                                onPress={this.toggleFavorite}
+                                style={styles.favoriteButton}
+                                type='clear' />
+                        </View>
                         <View style={styles.separator} />
-                        <Text style={styles.header}>Tracks</Text>
-                        {this._renderTracks(0)}
-                        <Text style={styles.header}>Encore</Text>
-                        {this._renderTracks(1)}
-                        <View>
-                            <Text>Include other artists at this gig</Text>
-                            <Switch
-                                onValueChange={() => this.setState({includeOtherArtists: !this.state.includeOtherArtists})}
-                                value={this.state.includeOtherArtists}/>
-                        </View>
-                        <View>
-                            <Text style={styles.header}>Public</Text>
-                            <Switch
-                                onValueChange={() => this.setState({isPublic: !this.state.isPublic})}
-                                value={this.state.isPublic}/>
-                            <Text style={styles.header}>Private</Text>
-                        </View>
-                        <View>
-                            <Text style={styles.header}>Shuffle</Text>
-                            <Switch
-                                onValueChange={() => this.setState({doShuffle: !this.state.doShuffle})}
-                                value={this.state.doShuffle}/>
-                        </View>
-                        <Text>Title</Text>
-                        <TextInput
-                            underlineColorAndroid='transparent'
-                            placeholder='Playlist title...'
-                            onChangeText={(text) => this.setState({title: text})}/>
-                        <Button title='Create Playlist' onPress={this.handleSubmit} />
-                    </ScrollView>
-                </View>
-                </KeyboardAvoidingView>
+
+                        <ScrollView style={styles.scrollContainer}
+                            contentContainerStyle={styles.scrollContent}
+                            keyboardDismissMode='on-drag'>
+                            <View style={styles.tracksContainer}>
+                                <Text style={styles.header}>Tracks</Text>
+                                {this._renderTracks(0)}
+                                <Text style={styles.header}>Encore</Text>
+                                {this._renderTracks(1)}
+                            </View>
+                            <View style={styles.optionsContainer}>
+                                <View style={styles.otherArtistsContainer}>
+                                    <Text style={[styles.otherArtistsLabel, styles.optionsHeader]}>Include other artists at this gig</Text>
+                                    <Switch
+                                        onValueChange={() => this.setState({includeOtherArtists: !this.state.includeOtherArtists})}
+                                        value={this.state.includeOtherArtists}/>
+                                </View>
+                                <View style={styles.visibilityContainer}>
+                                    <Text style={[styles.publicLabel, styles.optionsHeader]}>Public</Text>
+                                    <Switch
+                                        onValueChange={() => this.setState({isPublic: !this.state.isPublic})}
+                                        value={this.state.isPublic}/>
+                                    <Text style={[styles.privateLabel, styles.optionsHeader]}>Private</Text>
+                                </View>
+                                <View style={styles.shuffleContainer}>
+                                    <Text style={[styles.optionsHeader, styles.shuffleLabel]}>Shuffle</Text>
+                                    <Switch
+                                        onValueChange={() => this.setState({doShuffle: !this.state.doShuffle})}
+                                        value={this.state.doShuffle}/>
+                                </View>
+                                <View style={styles.titleContainer}>
+                                    <Text style={styles.inputLabel}>Title</Text>
+                                    <TextInput
+                                        underlineColorAndroid='transparent'
+                                        placeholder='Playlist title...'
+                                        onChangeText={(text) => this.setState({title: text})}
+                                        style={styles.titleInput} />
+                                </View>
+                            </View>
+                            <TouchableOpacity
+                                onPress={this.handleSubmit}
+                                style={styles.createPlaylistButton}>
+                                <LinearGradient
+                                    colors={[colors.teal, colors.seafoam]}
+                                    style={styles.buttonGradient}
+                                    start={[1, 0]}
+                                    end={[0, 1]}>
+                                        <Text style={styles.createPlaylistText}>Create Playlist</Text>
+                                </LinearGradient>
+                            </TouchableOpacity>
+                        </ScrollView>
+                        </KeyboardAvoidingView>
+                    </View>
+
+                </GradientBackground>
             )
         }
     }
@@ -282,7 +339,7 @@ export default class CreatePlaylistScreen extends Component {
                 tracks.push(
                     <Text
                         key={'row-' + i}
-                        style={disabled ? styles.disabledTrack : styles.enabledTrack}>{name}</Text>
+                        style={[styles.track, disabled ? styles.disabledTrack : styles.enabledTrack]}>{i+1}. {name}</Text>
                 );
             }
         }

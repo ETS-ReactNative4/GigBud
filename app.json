@@ -4,6 +4,7 @@
     "slug": "GigBud",
     "privacy": "public",
     "sdkVersion": "32.0.0",
+    "scheme": "gigbud",
     "platforms": [
       "ios",
       "android"
@@ -21,7 +22,12 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
-    }
+      "supportsTablet": true,
+      "bundleIdentifier": "com.churtdev.GigBud"
+     },
+    "android": {
+      "package": "com.churtdev.GigBud",
+      "permissions": ["READ_EXTERNAL_STORAGE", "WRITE_EXTERNAL_STORAGE"]
+     }
   }
 }

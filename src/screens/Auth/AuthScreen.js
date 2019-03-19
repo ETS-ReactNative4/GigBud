@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { View, Image, Text, Button, AsyncStorage, TouchableOpacity,
-         ActivityIndicator } from 'react-native';
+         ActivityIndicator, Alert } from 'react-native';
 import { Font, LinearGradient } from 'expo';
 
 import images from 'res/images';
@@ -29,6 +29,10 @@ export default class AuthScreen extends Component {
     }
 
     setStreamingService = async (service) => {
+        // Alert.alert('Alert title', 'Alert message', [
+        //     {text: 'Cancel', onPress: () => console.log('cancel pressed'), style: 'cancel'},
+        //     {text: 'OK', onPress: () => console.log('ok pressed')}
+        // ])
         var factory = new StreamingFactory(service);
         var type = factory.createService();
         console.log(type);

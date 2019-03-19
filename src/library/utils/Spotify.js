@@ -10,7 +10,8 @@ async function AuthenticateUser(id, secret, scopes) {
             '&scope=' + encodeURIComponent(scopes) +
             '&redirect_uri=' + encodeURIComponent(redirectUrl);
     let result = await AuthSession.startAsync({
-        authUrl:authUrl
+        authUrl:authUrl,
+        returnUrl: 'gigbud://'
     });
     if(result.type === 'success') {
         return {

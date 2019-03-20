@@ -54,6 +54,7 @@ export default class HomeScreen extends Component {
     }
 
     getPastPlaylists = async () => {
+        // await AsyncStorage.setItem(constants.pastPlaylists, "");
         let p = await AsyncStorage.getItem(constants.pastPlaylists);
         // console.log(JSON.parse(p));
         if(p != null) {
@@ -89,16 +90,24 @@ export default class HomeScreen extends Component {
         }
         if(this.state.pastPlaylists.length == 0) {
             return (
+                <KeyboardAvoidingView style={styles.rootContainer} behavior='padding' enabled>
                 <View style={styles.rootContainer}>
-                    <SearchBar
-                        containerStyle={styles.searchContainer}
-                        placeholder={strings.searchPlaceholder}
-                        onChangeText={this.handleChange}
-                        value={this.state.search}
-                        onSubmitEditing={this.handleSubmit} />
-                    <Text>You have not made any playlists yet!
-                        Search for an artist to begin making playlists.</Text>
+                    <GradientBackground colors={[colors.pink, colors.navyblue]}>
+
+                        <SearchBar
+                            containerStyle={styles.searchContainer}
+                            placeholder={strings.searchPlaceholder}
+                            onChangeText={this.handleChange}
+                            value={this.state.search}
+                            onSubmitEditing={this.handleSubmit}
+                            inputStyle={styles.input} />
+                        <View style={styles.noPlaylistsContainer}>
+                            <Text style={styles.noPlaylistsText}>You have not made any playlists yet!
+                                Search for an artist to begin making playlists.</Text>
+                        </View>
+                    </GradientBackground>
                 </View>
+                </KeyboardAvoidingView>
             )
         }
         return (

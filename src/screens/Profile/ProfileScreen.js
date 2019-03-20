@@ -142,20 +142,24 @@ export default class ProfileScreen extends Component {
         if(this.state.pastPlaylists.length == 0) {
             return (
                 <GradientBackground colors={[colors.pink, colors.navyblue]}>
-                    <Text>You have not made any playlists yet!
-                        Search for an artist to begin making playlists.
-                    </Text>
-                    <TouchableOpacity
-                        onPress={this.logout}
-                        style={styles.logoutButton}>
-                        <LinearGradient
-                            colors={[colors.red, colors.pink]}
-                            style={styles.buttonGradient}
-                            start={[1, 0]}
-                            end={[0, 1]}>
-                            <Text style={styles.btnText}>Logout</Text>
-                        </LinearGradient>
-                    </TouchableOpacity>
+                    <View style={styles.textContainer}>
+                        <Text style={styles.centeredText}>You have not made any playlists yet!
+                            Search for an artist to begin making playlists.
+                        </Text>
+                    </View>
+                    <View style={styles.buttonContainer}>
+                        <TouchableOpacity
+                            onPress={this.logout}
+                            style={styles.logoutButton}>
+                            <LinearGradient
+                                colors={[colors.red, colors.pink]}
+                                style={styles.buttonGradient}
+                                start={[1, 0]}
+                                end={[0, 1]}>
+                                <Text style={styles.btnText}>Logout</Text>
+                            </LinearGradient>
+                        </TouchableOpacity>
+                    </View>
                 </GradientBackground>
             )
         }
@@ -197,9 +201,13 @@ export default class ProfileScreen extends Component {
         var i = 0;
         while(i < pastPlaylists.length && i < 3) {
             playlists.push(
-                <SearchResultTicketButton
-                    key={'playlist-' + i}
-                    data={pastPlaylists[i]} />
+                <View
+                    key={'ticektView-' + i}
+                    style={styles.ticket}>
+                    <SearchResultTicketButton
+                        key={'playlist-' + i}
+                        data={pastPlaylists[i]} />
+                </View>
             );
             i++;
         }

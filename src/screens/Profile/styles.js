@@ -2,11 +2,27 @@ import { StyleSheet } from 'react-native';
 import colors from 'res/colors';
 
 const styles = StyleSheet.create({
+    textContainer: {
+        flex: 1,
+        flexGrow: 4,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    logoutContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: '60%',
+    },
     recentPlaylistsContainer: {
         marginTop: '5%',
         height: '50%',
         width: '85%',
         alignSelf: 'center',
+        // justifyContent: 'space-around',
+    },
+    ticket: {
+        height: '33%',
     },
     centeredText: {
         color: 'white',
@@ -22,6 +38,7 @@ const styles = StyleSheet.create({
         height: '25%',
         width: '85%',
         alignSelf: 'center',
+        marginTop: '3%',
     },
     suggestions: {
         flex: 1,
@@ -66,7 +83,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         alignSelf: 'center',
         textShadowColor: 'rgba(0, 0, 0, 0.75)',
-        textShadowOffset: {width: -1, height: -1},
+        textShadowOffset: {width: 1, height: 1},
         textShadowRadius: 5,
     }
 })

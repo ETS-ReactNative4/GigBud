@@ -7,6 +7,20 @@ const styles = StyleSheet.create({
     gradientContainer: {
         flex: 1,
     },
+    noPlaylistsContainer: {
+        flex: 1,
+        flexGrow: 12,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    noPlaylistsText: {
+        color: 'white',
+        textAlign: 'center',
+        fontSize: 20,
+        textShadowColor: 'rgba(0, 0, 0, 0.75)',
+        textShadowOffset: {width: 1, height: 1},
+        textShadowRadius: 5,
+    },
     scrollContainer: {
         flex: 1,
     },

@@ -25,7 +25,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.churtdev.GigBud",
-      "buildNumber": "1.0.0",
+      "buildNumber": "1.1.0",
       "icon": "./assets/images/ios_icon.png"
      },
     "android": {

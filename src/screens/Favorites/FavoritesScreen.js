@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { View, Image, Text, Button, ActivityIndicator,
          AsyncStorage, FlatList, ScrollView } from 'react-native';
 import { LinearGradient } from 'expo';
+import { NavigationEvents } from 'react-navigation';
 
 import GradientBackground from 'library/components/GradientBackground';
 import SearchResultTicketButton from 'library/components/SearchResultTicketButton';
@@ -67,22 +68,26 @@ export default class FavoritesScreen extends Component {
         }
 
         return (
-            <GradientBackground colors={[colors.pink, colors.navyblue]}>
-                <ScrollView>
-                    <Text style={styles.title}>Setlists you love</Text>
-                    <FlatList
-                        style={styles.flatlist}
-                        data={this.state.favoriteSetlists}
-                        onEndReachedThreshold={0.5}
-                        onEndReached={() => {
-                            this.loadMore()
-                        }}
-                        renderItem={({item}) =>
-                            <SearchResultTicketButton data={item} />
-                        }
-                    />
-                </ScrollView>
-            </GradientBackground>
+            <View style={styles.rootContainer}>
+                <NavigationEvents
+                    onWillFocus={payload => this.componentDidMount()} />
+                <GradientBackground colors={[colors.pink, colors.navyblue]}>
+                    <ScrollView>
+                        <Text style={styles.title}>Setlists you love</Text>
+                        <FlatList
+                            style={styles.flatlist}
+                            data={this.state.favoriteSetlists}
+                            onEndReachedThreshold={0.5}
+                            onEndReached={() => {
+                                this.loadMore()
+                            }}
+                            renderItem={({item}) =>
+                                <SearchResultTicketButton data={item} />
+                            }
+                        />
+                    </ScrollView>
+                </GradientBackground>
+            </View>
         )
     }
 

@@ -9,11 +9,12 @@
       "ios",
       "android"
     ],
-    "version": "1.0.0",
+    "version": "2.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "splash": {
-      "backgroundColor": "#07337A"
+        "image": "./assets/images/splash.png",
+        "backgroundColor": "#18305c"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
@@ -23,11 +24,15 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.churtdev.GigBud"
+      "bundleIdentifier": "com.churtdev.GigBud",
+      "buildNumber": "1.0.0",
+      "icon": "./assets/images/ios_icon.png"
      },
     "android": {
       "package": "com.churtdev.GigBud",
-      "permissions": ["READ_EXTERNAL_STORAGE", "WRITE_EXTERNAL_STORAGE"]
-     }
+      "permissions": ["READ_EXTERNAL_STORAGE", "WRITE_EXTERNAL_STORAGE"],
+      "versionCode": 3
+    },
+
   }
 }

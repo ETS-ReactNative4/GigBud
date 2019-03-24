@@ -6,7 +6,7 @@ import {
 } from 'react-native';
 import { Header, SearchBar } from 'react-native-elements';
 import { LinearGradient } from 'expo';
-import {createDrawerNavigator, createAppContainer} from 'react-navigation';
+import { NavigationEvents } from 'react-navigation';
 
 import SearchResultTicketButton from 'library/components/SearchResultTicketButton';
 import GradientBackground from 'library/components/GradientBackground';
@@ -38,6 +38,13 @@ export default class HomeScreen extends Component {
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
 
+        const didBlurSubscription = this.props.navigation.addListener(
+            'willFocus',
+            payload => {
+                this.getPastPlaylists();
+            }
+        );
+
         this._isMounted = false;
     }
 
@@ -45,13 +52,14 @@ export default class HomeScreen extends Component {
         this._isMounted = true;
     }
 
+    componentDidMount() {
+        this.getPastPlaylists();
+    }
+
     componentWillUnmount() {
         this._isMounted = false;
     }
 
-    componentDidMount() {
-        this.getPastPlaylists();
-    }
 
     getPastPlaylists = async () => {
         // await AsyncStorage.setItem(constants.pastPlaylists, "");
@@ -75,7 +83,7 @@ export default class HomeScreen extends Component {
             // alert
         } else {
             this.props.navigation.navigate('Results', {
-                searchValue: this.state.search
+                searchValue: this.state.search,
             });
         }
     }
@@ -92,8 +100,9 @@ export default class HomeScreen extends Component {
             return (
                 <KeyboardAvoidingView style={styles.rootContainer} behavior='padding' enabled>
                 <View style={styles.rootContainer}>
+                    <NavigationEvents
+                        onWillFocus={payload => this.getPastPlaylists()} />
                     <GradientBackground colors={[colors.pink, colors.navyblue]}>
-
                         <SearchBar
                             containerStyle={styles.searchContainer}
                             placeholder={strings.searchPlaceholder}
@@ -113,6 +122,8 @@ export default class HomeScreen extends Component {
         return (
             <KeyboardAvoidingView style={styles.rootContainer} behavior='padding' enabled>
             <View style={styles.rootContainer}>
+                <NavigationEvents
+                    onWillFocus={payload => this.getPastPlaylists()} />
                 <GradientBackground colors={[colors.pink, colors.navyblue]}>
                     <ScrollView style={styles.scrollContainer}>
                         <SearchBar

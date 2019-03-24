@@ -5,6 +5,7 @@ import {
     ListView
 } from 'react-native';
 import { LinearGradient } from 'expo';
+import { NavigationEvents } from 'react-navigation';
 
 import SearchResultTicketButton from 'library/components/SearchResultTicketButton';
 import GradientBackground from 'library/components/GradientBackground';
@@ -51,7 +52,10 @@ export default class ProfileScreen extends Component {
 
     loadThings = async () => {
         this.getPastPlaylists()
-        .then(() => this.getArtistRecommendations())
+        .then(() => {
+            if(this.state.pastPlaylists.length > 0)
+                this.getArtistRecommendations();
+        })
         .then(() => {
             if(this._isMounted)
                 this.setState({isLoading: false});
@@ -59,12 +63,14 @@ export default class ProfileScreen extends Component {
     }
 
     hasBeenLongerThanADay = async () => {
-        let result = false;
+        var result = false;
         let time = await AsyncStorage.getItem('artistRecsTimeStamp');
-        console.log(time);
+        console.log('artistRecsTimeStamp: ' + time);
         if(time != null) {
             let timeNow = Date.now() / 1000; // seconds since UNIX epoch
-            if((timeNow - (parseInt(time)/1000)) < 86,400) { // (60 secs)*(60 mins)*(24 hr)
+            console.log('timeNow: ' + timeNow);
+            console.log('timeNow - timeSaved: ' + (timeNow - (parseInt(time)/1000)));
+            if((timeNow - (parseInt(time)/1000)) < 3600) { // (60 secs)*(60 mins)
                 result = false;
             } else {
                 result = true;
@@ -72,6 +78,7 @@ export default class ProfileScreen extends Component {
         } else {
             result = true;
         }
+        console.log(result);
         return result;
     }
 
@@ -79,6 +86,9 @@ export default class ProfileScreen extends Component {
         // Get 3 artist suggestions based on 3 recent playlists
         // Generate random index number, add that artist to list to render
         // Add time stamp to storage to only do once per day
+        // await AsyncStorage.setItem('pastArtistRecommendations', '');
+        // await AsyncStorage.setItem('artistRecsTimeStamp', '0');
+        // await AsyncStorage.setItem(constants.pastPlaylists, '');
         let hasBeenLongerThanADay = await this.hasBeenLongerThanADay();
 
         if(hasBeenLongerThanADay) {
@@ -92,9 +102,11 @@ export default class ProfileScreen extends Component {
                 artistNames.push(this.state.pastPlaylists[i].artist.name);
                 i++;
             }
+            console.log('artistNames: ' + artistNames);
             // Get related artists
             // [{name: artistName, genre: genre}]
             let recommendations = await serviceType.getRecommendations(artistNames);
+            console.log('recommendations: ' + recommendations);
             // Get 3 random artists
             let actualRecs = [];
             for(let j = 0; j < 3; j++) {
@@ -102,11 +114,13 @@ export default class ProfileScreen extends Component {
                 actualRecs.push(recommendations[rand]);
                 recommendations.splice(rand, 1);
             }
-            // Save timestamp and artist recommendations to storage
-            AsyncStorage.setItem('artistRecsTimeStamp', (Date.now()).toString());
-            AsyncStorage.setItem('pastArtistRecommendations', JSON.stringify(actualRecs));
-            if(this._isMounted)
-                this.setState({recommendations: actualRecs});
+            if(actualRecs.length > 0) {
+                // Save timestamp and artist recommendations to storage
+                AsyncStorage.setItem('artistRecsTimeStamp', (Date.now()).toString());
+                AsyncStorage.setItem('pastArtistRecommendations', JSON.stringify(actualRecs));
+                if(this._isMounted)
+                    this.setState({recommendations: actualRecs});
+            }
         } else {
             // use past recs
             let pastRecs = await AsyncStorage.getItem('pastArtistRecommendations');
@@ -141,12 +155,50 @@ export default class ProfileScreen extends Component {
 
         if(this.state.pastPlaylists.length == 0) {
             return (
+                <View style={styles.rootContainer}>
+                    <NavigationEvents
+                        onWillFocus={payload => this.loadThings()} />
+                    <GradientBackground colors={[colors.pink, colors.navyblue]}>
+                        <View style={styles.textContainer}>
+                            <Text style={styles.centeredText}>You have not made any playlists yet!
+                                Search for an artist to begin making playlists.
+                            </Text>
+                        </View>
+                        <View style={styles.buttonContainer}>
+                            <TouchableOpacity
+                                onPress={this.logout}
+                                style={styles.logoutButton}>
+                                <LinearGradient
+                                    colors={[colors.red, colors.pink]}
+                                    style={styles.buttonGradient}
+                                    start={[1, 0]}
+                                    end={[0, 1]}>
+                                    <Text style={styles.btnText}>Logout</Text>
+                                </LinearGradient>
+                            </TouchableOpacity>
+                        </View>
+                    </GradientBackground>
+                </View>
+            )
+        }
+
+        return (
+            <View style={styles.rootContainer}>
+                <NavigationEvents
+                    onWillFocus={payload => this.loadThings()} />
                 <GradientBackground colors={[colors.pink, colors.navyblue]}>
-                    <View style={styles.textContainer}>
-                        <Text style={styles.centeredText}>You have not made any playlists yet!
-                            Search for an artist to begin making playlists.
-                        </Text>
+                    <View style={styles.recentPlaylistsContainer}>
+                        <Text style={styles.centeredText}>Your most recent playlists</Text>
+                        {this._renderRecentPlaylists()}
                     </View>
+
+                    <View style={styles.suggestionsContainer}>
+                        <Text style={styles.centeredText}>Artist recommendations</Text>
+                        <View style={styles.suggestions}>
+                            {this._renderArtistSuggestions()}
+                        </View>
+                    </View>
+
                     <View style={styles.buttonContainer}>
                         <TouchableOpacity
                             onPress={this.logout}
@@ -161,37 +213,7 @@ export default class ProfileScreen extends Component {
                         </TouchableOpacity>
                     </View>
                 </GradientBackground>
-            )
-        }
-
-        return (
-            <GradientBackground colors={[colors.pink, colors.navyblue]}>
-                <View style={styles.recentPlaylistsContainer}>
-                    <Text style={styles.centeredText}>Your most recent playlists</Text>
-                    {this._renderRecentPlaylists()}
-                </View>
-
-                <View style={styles.suggestionsContainer}>
-                    <Text style={styles.centeredText}>Artist recommendations</Text>
-                    <View style={styles.suggestions}>
-                        {this._renderArtistSuggestions()}
-                    </View>
-                </View>
-
-                <View style={styles.buttonContainer}>
-                    <TouchableOpacity
-                        onPress={this.logout}
-                        style={styles.logoutButton}>
-                        <LinearGradient
-                            colors={[colors.red, colors.pink]}
-                            style={styles.buttonGradient}
-                            start={[1, 0]}
-                            end={[0, 1]}>
-                            <Text style={styles.btnText}>Logout</Text>
-                        </LinearGradient>
-                    </TouchableOpacity>
-                </View>
-            </GradientBackground>
+            </View>
         );
     }
 
@@ -216,6 +238,8 @@ export default class ProfileScreen extends Component {
 
     _renderArtistSuggestions() {
         let recommendations = this.state.recommendations;
+        if(recommendations.length < 3)
+            return [];
         let recs = [];
         recs.push(
             <View key={'sug-' + 0} style={styles.suggestionBox}>

@@ -166,7 +166,7 @@ export default class SearchResultsScreen extends Component {
                             onEndReached={() => {
                                 this.loadMore()
                             }}
-                            renderItem={({item}) => <SearchResultTicketButton data={item}/>}
+                            renderItem={({item}) => <SearchResultTicketButton data={item} />}
                             keyExtractor={item => item.id}
                         />
                     </GradientBackground>

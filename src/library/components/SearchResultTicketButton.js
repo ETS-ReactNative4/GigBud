@@ -34,7 +34,7 @@ class TicketButton extends Component {
                     <View style={styles.info}>
                         <Text style={styles.artistName}>{artist}</Text>
                         <Text style={styles.infoText}>{location}</Text>
-                        
+
                         <Text style={styles.infoText}>{songs} songs</Text>
                     </View>
                 </LinearGradient>
@@ -86,7 +86,8 @@ class TicketButton extends Component {
     navigateToForm = (data) => {
         this.props.navigation.navigate('CreatePlaylist',
         {
-            setlistData: data
+            setlistData: data,
+            // refreshFunc: this.props.navigation.getParam('refreshFunc', null),
         });
     }
 }

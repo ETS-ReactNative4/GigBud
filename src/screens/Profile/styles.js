@@ -2,6 +2,9 @@ import { StyleSheet } from 'react-native';
 import colors from 'res/colors';
 
 const styles = StyleSheet.create({
+    rootContainer: {
+        flex: 1,
+    },
     textContainer: {
         flex: 1,
         flexGrow: 4,

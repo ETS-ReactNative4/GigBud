@@ -18,6 +18,7 @@ import {
 } from 'react-navigation';
 import { Font, SecureStore, LinearGradient } from 'expo';
 import { FontAwesome } from '@expo/vector-icons';
+import Sentry from 'sentry-expo';
 
 import fonts from 'res/fonts';
 
@@ -152,6 +153,9 @@ const AppContainer = createAppContainer(createSwitchNavigator(
         initialRouteName: 'Initial'
     }
 ));
+
+Sentry.enableInExpoDevelopment = true;
+Sentry.config('https://46f655e8c18f426fbb9eda79c1fd16a7@sentry.io/1421226').install();
 
 export default AppContainer;
 AppRegistry.registerComponent('main', () => AppContainer)

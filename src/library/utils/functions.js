@@ -2,6 +2,7 @@ import CryptoJS from 'react-native-crypto-js';
 import { SecureStore } from 'expo';
 import constants from 'library/utils/constants';
 
+// Formats a string so that is in the format of a url
 export function UrlFormat(b) {
     var a = arguments;
     return b.replace(/(\{\{\d\}\}|\{\d\})/g, function (b) {
@@ -11,6 +12,7 @@ export function UrlFormat(b) {
     })
 };
 
+// Encodes a string to base64
 const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
 export function EncodeBase64(input:string = '') {
     let str = input;
@@ -32,6 +34,7 @@ export function EncodeBase64(input:string = '') {
     return output;
 };
 
+// Decodes a base64 string
 export function DecodeBase64(input:string = '') {
     let str = input.replace(/=+$/, '');
     let output = '';
@@ -51,6 +54,7 @@ export function DecodeBase64(input:string = '') {
     return output;
 };
 
+// Generates a JWT token
 async function GetJWT() {
     var url = 'https://us-central1-gigbud-81332.cloudfunctions.net/getJWT';
     return fetch(url, {
@@ -75,6 +79,7 @@ async function GetJWT() {
     // })
 };
 
+// Returns artists that appeared at a venue on a given date
 async function GetOtherArtists(date, venueId) {
     let api_key = await SecureStore.getItemAsync(constants.local_setlist_fm);
     let url = 'https://api.setlist.fm/rest/1.0/search/setlists?' +

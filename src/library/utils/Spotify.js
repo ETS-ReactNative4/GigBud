@@ -2,6 +2,7 @@ import { AuthSession } from 'expo';
 import { EncodeBase64, UrlFormat } from 'library/utils/functions';
 import constants from 'library/utils/constants';
 
+// Authenticates a user
 async function AuthenticateUser(id, secret, scopes) {
     let redirectUrl = AuthSession.getRedirectUrl();
     let authUrl = 'https://accounts.spotify.com/authorize?' +
@@ -27,6 +28,7 @@ async function AuthenticateUser(id, secret, scopes) {
     }
 }
 
+// Returns access token for a user's account
 async function RequestAccessTokens(authCode, id, secret, uri) {
     // Because spotify api expects x-www-form-urlencoded
     // we have to build the form body manually, can't use json
@@ -69,6 +71,7 @@ async function RequestAccessTokens(authCode, id, secret, uri) {
     })
 }
 
+// Returns an access token from a refresh token
 async function RequestTokenFromRefresh(refreshToken, id, secret) {
     var details = {
         grant_type: 'refresh_token',
@@ -105,6 +108,7 @@ async function RequestTokenFromRefresh(refreshToken, id, secret) {
     })
 }
 
+// Searches an artist on the spotify api
 async function SearchArtist(authToken, artist) {
     let url = UrlFormat(constants.spotify_search_artists, encodeURIComponent(artist));
     return fetch(url, {
@@ -119,6 +123,7 @@ async function SearchArtist(authToken, artist) {
     })
 }
 
+// Returns related artists
 async function GetRelatedArtists(authToken, url) {
     return fetch(url, {
         method: 'GET',
@@ -129,8 +134,10 @@ async function GetRelatedArtists(authToken, url) {
     .then((response) => response.json())
 }
 
+// Returns recommendations for a given list of artists
 async function GetArtistRecommendations(authToken, ids) {
     var artists = [];
+    // Iterate over given artists and get all related
     for(let i = 0; i < ids.length; i++) {
         let url = UrlFormat('https://api.spotify.com/v1/artists/{0}/related-artists', ids[i]);
         let data = await GetRelatedArtists(authToken, url);
@@ -141,6 +148,7 @@ async function GetArtistRecommendations(authToken, ids) {
     return artists;
 }
 
+// Returns list of artist's albums on spotify
 async function GetAlbumsFromArtist(authToken, artistID) {
     let url = UrlFormat(constants.spotify_get_albums, artistID);
     return fetch(url, {
@@ -163,6 +171,7 @@ async function GetAlbumsFromArtist(authToken, artistID) {
     .catch((error) => {console.error(error)})
 }
 
+// Returns list of tracks on an album on spotify
 async function GetTracksFromAlbum(authToken, albumID) {
     let url = UrlFormat(constants.spotify_get_tracks, albumID);
     return fetch(url, {
@@ -185,6 +194,7 @@ async function GetTracksFromAlbum(authToken, albumID) {
     })
 }
 
+// Returns a user's id
 async function GetUser(authToken) {
     return fetch('https://api.spotify.com/v1/me', {
         method: 'GET',
@@ -198,6 +208,7 @@ async function GetUser(authToken) {
     })
 }
 
+// Adds a playlist to a user's account
 async function CreatePlaylist(authToken, userID, title, pub) {
     var details = {
         name: title,
@@ -222,6 +233,8 @@ async function CreatePlaylist(authToken, userID, title, pub) {
     })
 }
 
+// Adds up to 99 songs to a playlist
+// max number of songs that can be added in 1 request is 100
 async function AddSongsToPlaylist(authToken, id, tracks) {
     var uris = []
     if(tracks.length > 99) {

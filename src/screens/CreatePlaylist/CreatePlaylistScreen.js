@@ -62,6 +62,8 @@ export default class CreatePlaylistScreen extends Component {
         this._isMounted = false;
     }
 
+    // Gets the factory for the service the user is using
+    // gets tracks and other artists data
     componentDidMount() {
         this.getPreferredService().then(() => {
             var factory = new StreamingFactory(this.prefService);
@@ -72,6 +74,8 @@ export default class CreatePlaylistScreen extends Component {
         this.isaFavoriteSetlist();
     }
 
+    // Gets all other artists that played at the same concert
+    // as the given artist
     getOtherArtists = async () => {
         let other = [];
         let otherNames = [];
@@ -95,6 +99,7 @@ export default class CreatePlaylistScreen extends Component {
         }
     }
 
+    // Checks to see if this setlist is a favorited setlist
     isaFavoriteSetlist = async () => {
         this.favoriteSetlists = await AsyncStorage.getItem(constants.favoriteSetlists);
         // console.log(this.favoriteSetlists);
@@ -115,10 +120,12 @@ export default class CreatePlaylistScreen extends Component {
         }
     }
 
+    // Gets the preferred streaming service of the user
     getPreferredService = async () => {
         this.prefService = await AsyncStorage.getItem(constants.local_streaming_service);
     }
 
+    // Gets all tracks of this concert
     getAllTracks = async () => {
         let result = await this.serviceType.getAllTracks(this.state.data.artist.name);
         // Assign things with the result
@@ -134,6 +141,7 @@ export default class CreatePlaylistScreen extends Component {
         }
     }
 
+    // Logic for creating a playlist when the button is pressed
     handleSubmit = async () => {
         if(this._isMounted)
             this.setState({submitLoading: true})
@@ -155,6 +163,7 @@ export default class CreatePlaylistScreen extends Component {
         this.props.navigation.navigate('App');
     }
 
+    // Adds this playlist to the history of playlists a user has created
     addToPastPlaylists = async () => {
         let pastPlaylists = await AsyncStorage.getItem(constants.pastPlaylists);
         if(pastPlaylists != null) {
@@ -180,6 +189,7 @@ export default class CreatePlaylistScreen extends Component {
         AsyncStorage.setItem(constants.pastPlaylists, JSON.stringify(pastPlaylists));
     }
 
+    // Toggles whether this setlist is a favorited setlist or not
     toggleFavorite = async () => {
         // If this setlist is in favorites, remove
         if(this.state.isFavorite) {
@@ -324,6 +334,8 @@ export default class CreatePlaylistScreen extends Component {
         }
     }
 
+    // Renders list of playlist tracks
+    // set them as disabled if not on the streaming service
     _renderTracks(set) {
         let tracks = [];
         let data = this.state.data;

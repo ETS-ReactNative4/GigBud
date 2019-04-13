@@ -9,6 +9,7 @@ import constants from 'utils/constants';
 import { SecureStore } from 'expo';
 import { AsyncStorage } from 'react-native';
 
+// Spotify factory
 export default class SpotifyService {
 	constructor() {
 		this.refreshToken = '';
@@ -17,6 +18,7 @@ export default class SpotifyService {
 		this.artistImageUrl = '';
 	}
 
+	// Store api and auth tokens for using spotify
 	async storeTokens(tokens) {
 		SecureStore.setItemAsync(constants.local_spotify_access_token,
             tokens.access_token);
@@ -26,6 +28,8 @@ export default class SpotifyService {
         AsyncStorage.setItem(constants.isLoggedIn, 'true');
 	}
 
+	// Authenticates the user with their spotify account
+	// saves their access tokens to local storage
 	async authenticateUser() {
 		id = await SecureStore.getItemAsync(constants.local_spotify_id);
 		secret = await SecureStore.getItemAsync(constants.local_spotify_secret);
@@ -40,6 +44,7 @@ export default class SpotifyService {
 		}
 	}
 
+	// Returns api and access tokens
 	async getTokensFromStorage() {
 		return Promise.all([
 			SecureStore.getItemAsync(constants.local_spotify_refresh_token),
@@ -48,6 +53,8 @@ export default class SpotifyService {
 		]);
 	}
 
+	// Returns status, track details, track titles, and an image url
+	// for the artist
 	async getAllTracks(artistName) {
 		// Retrieve tokens from storage
 		let p = await this.getTokensFromStorage();
@@ -85,6 +92,7 @@ export default class SpotifyService {
 		return a;
 	}
 
+	// Creates a playlist on the user's spotify account
 	async handleSubmit(playlistTracks, trackObjects, title, isPublic, doShuffle,
 						includeOtherArtists, otherArtists) {
 		// Get other artists
@@ -140,6 +148,7 @@ export default class SpotifyService {
 		}
 	}
 
+	// Returns band recommendations from a list of band's
 	async getRecommendations(artistNames) {
 		// Retrieve tokens from storage
 		let p = await this.getTokensFromStorage();
@@ -158,6 +167,7 @@ export default class SpotifyService {
 		return GetArtistRecommendations(token, ids);
 	}
 
+	// Returns an image url for a given band
 	async GetImageUrl(artistName) {
 		// Retrieve tokens from storage
 		let p = await this.getTokensFromStorage();

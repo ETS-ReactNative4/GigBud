@@ -38,6 +38,8 @@ export default class HomeScreen extends Component {
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
 
+        // this will refresh the page when user navigates to it
+        // otherwise it will load data once
         const didBlurSubscription = this.props.navigation.addListener(
             'willFocus',
             payload => {
@@ -60,7 +62,7 @@ export default class HomeScreen extends Component {
         this._isMounted = false;
     }
 
-
+    // Gets all playlists a user has made from local storage
     getPastPlaylists = async () => {
         // await AsyncStorage.setItem(constants.pastPlaylists, "");
         let p = await AsyncStorage.getItem(constants.pastPlaylists);

@@ -4,6 +4,7 @@ import { LinearGradient } from 'expo';
 
 import colors from 'res/colors';
 
+// Gradient Background component
 class GradientBackground extends Component {
     render() {
         return (
@@ -14,7 +15,7 @@ class GradientBackground extends Component {
                 end={[0, 1]}>
 
                 {this.props.children}
-                
+
             </LinearGradient>
         )
     }

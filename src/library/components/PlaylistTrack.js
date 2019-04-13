@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
 
+// Button that adds/removes playlist tracks from a playlist
 class PlaylistTrack extends Component {
     constructor(props) {
         super(props);

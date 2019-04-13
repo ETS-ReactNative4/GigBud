@@ -6,6 +6,7 @@ import { withNavigation } from 'react-navigation';
 import strings from 'res/strings';
 import images from 'res/images';
 
+// Component that is used to search setlist.fm
 class SearchInput extends Component {
     constructor(props) {
         super(props);

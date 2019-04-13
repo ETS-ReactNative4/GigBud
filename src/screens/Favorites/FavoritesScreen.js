@@ -47,6 +47,7 @@ export default class FavoritesScreen extends Component {
         });
     }
 
+    // Gets all favorited setlists from local storage
     getFavoriteSetlists = async () => {
         let setlists = await AsyncStorage.getItem(constants.favoriteSetlists);
         if(setlists != null) {

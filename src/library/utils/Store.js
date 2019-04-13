@@ -1,4 +1,4 @@
-// // Usage: 
+// // Usage:
 // import Store from 'utils/Store';
 // ...
 // let obj = {
@@ -11,6 +11,7 @@
 
 import Expo from 'expo'
 
+// Stores or retrieves an item from SecureStore
 const Store = async (key: string, value?: Object) => {
     let json = '';
 

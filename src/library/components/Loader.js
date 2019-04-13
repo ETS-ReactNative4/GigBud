@@ -3,6 +3,7 @@ import { View, ActivityIndicator, StyleSheet } from 'react-native';
 
 import colors from 'res/colors';
 
+// React component that is a loading spinner
 class Loader extends Component {
     render() {
         return (

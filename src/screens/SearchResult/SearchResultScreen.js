@@ -58,6 +58,7 @@ export default class SearchResultsScreen extends Component {
         });
     }
 
+    // Loads necessary data for this screen
     loadData = async () => {
         return Promise.all([
             this.searchForArtist(),
@@ -65,6 +66,7 @@ export default class SearchResultsScreen extends Component {
         ]);
     }
 
+    // Gets the image url for an artist
     getArtistImage = async () => {
         let prefService = await AsyncStorage.getItem(constants.local_streaming_service);
         var factory = new StreamingFactory(prefService);
@@ -74,13 +76,16 @@ export default class SearchResultsScreen extends Component {
             this.setState({imageUrl: imageUrl});
     }
 
+    // Searches for an artist on setlist.fm
     searchForArtist = async () => {
         var searchVal = this.props.navigation.getParam('searchValue', null);
         if(searchVal === null) {
             this.props.navigation.navigate('Error');
         } else {
+            // get api key
             let api_key = await SecureStore.getItemAsync(constants.local_setlist_fm);
             var url = UrlFormat(constants.setlist_fm_search_artists, encodeURIComponent(searchVal));
+            // search setlist.fm
             let data = await this.doFetch(url, api_key);
             if(data[0] === 200)
                 this.searchForSetlist(data[1].artist[0].mbid);
@@ -91,13 +96,17 @@ export default class SearchResultsScreen extends Component {
         }
     }
 
+    // Searches setlist.fm for each setlist of a given artist
     searchForSetlist = async (mbid) => {
+        // get api key
         let api_key = await SecureStore.getItemAsync(constants.local_setlist_fm);
         var url = UrlFormat(constants.setlist_fm_search_setlists, mbid, this.state.pageCounter);
+        // search setlist.fm
         let data = await this.doFetch(url, api_key);
         console.log(data);
         if(data[0] === 200) {
             let oldData = this.state.data;
+            // push setlists into list
             data[1].setlist.forEach((setlist) => oldData.push(setlist));
             if(this._isMounted)
                 this.setState({data: oldData});
@@ -107,6 +116,7 @@ export default class SearchResultsScreen extends Component {
         }
     }
 
+    // Do a generic url fetch
     doFetch = async (url, api_key) => {
         return fetch(url, {
             method: 'GET',
@@ -174,6 +184,7 @@ export default class SearchResultsScreen extends Component {
         }
     }
 
+    // Load more setlists into flatlist component for infinite scroll
     loadMore = async () => {
         if(this._isMounted)
             this.setState({pageCounter: this.state.pageCounter+1});

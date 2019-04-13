@@ -31,6 +31,8 @@ class InitialCheckScreen extends React.Component {
         .then(() => this.checkIfLaunched());
     }
 
+    // If user is logged in, send them to home
+    // else send them to the login screen
     checkIfLaunched = async () => {
         AsyncStorage.getItem(constants.isLoggedIn).then((value) => {
             // console.log(value);
@@ -53,6 +55,7 @@ class InitialCheckScreen extends React.Component {
         });
     }
 
+    // Gets the various api keys from firebase database
     getAndStoreApiKey = async (keyName) => {
         var db = firebase.firestore();
         var setlistRef = db.collection(constants.firebase_table).doc(keyName);
@@ -154,6 +157,7 @@ const AppContainer = createAppContainer(createSwitchNavigator(
     }
 ));
 
+// Production error and crash detection
 Sentry.enableInExpoDevelopment = true;
 Sentry.config('https://46f655e8c18f426fbb9eda79c1fd16a7@sentry.io/1421226').install();
 

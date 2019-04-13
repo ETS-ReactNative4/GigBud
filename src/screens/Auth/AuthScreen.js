@@ -28,6 +28,8 @@ export default class AuthScreen extends Component {
     componentDidMount() {
     }
 
+    // Stores the type of streaming service chosen by
+    // the user in local storage
     setStreamingService = async (service) => {
         // Alert.alert('Alert title', 'Alert message', [
         //     {text: 'Cancel', onPress: () => console.log('cancel pressed'), style: 'cancel'},

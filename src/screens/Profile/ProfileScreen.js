@@ -50,6 +50,7 @@ export default class ProfileScreen extends Component {
         this.loadThings();
     }
 
+    // Loads the necessary data from local storage
     loadThings = async () => {
         this.getPastPlaylists()
         .then(() => {
@@ -62,6 +63,9 @@ export default class ProfileScreen extends Component {
         })
     }
 
+    // Limits the number of times a user will receive band
+    // recommendations by checking to see if it has been
+    // more than 24 hours
     hasBeenLongerThanADay = async () => {
         var result = false;
         let time = await AsyncStorage.getItem('artistRecsTimeStamp');
@@ -82,13 +86,11 @@ export default class ProfileScreen extends Component {
         return result;
     }
 
+    // Gets artist recommendations for a user once per day
     getArtistRecommendations = async () => {
         // Get 3 artist suggestions based on 3 recent playlists
         // Generate random index number, add that artist to list to render
         // Add time stamp to storage to only do once per day
-        // await AsyncStorage.setItem('pastArtistRecommendations', '');
-        // await AsyncStorage.setItem('artistRecsTimeStamp', '0');
-        // await AsyncStorage.setItem(constants.pastPlaylists, '');
         let hasBeenLongerThanADay = await this.hasBeenLongerThanADay();
 
         if(hasBeenLongerThanADay) {
@@ -129,6 +131,7 @@ export default class ProfileScreen extends Component {
         }
     }
 
+    // Gets playlists made from local storage
     getPastPlaylists = async () => {
         this.prefService = await AsyncStorage.getItem(constants.local_streaming_service);
         let p = await AsyncStorage.getItem(constants.pastPlaylists);
@@ -138,6 +141,7 @@ export default class ProfileScreen extends Component {
         }
     }
 
+    // Logs the user out and sends them to the login screen
     logout = async () => {
         AsyncStorage.setItem(constants.isLoggedIn, 'false');
         this.props.navigation.navigate('Initial');
@@ -217,6 +221,7 @@ export default class ProfileScreen extends Component {
         );
     }
 
+    // Renders past playlists
     _renderRecentPlaylists() {
         let playlists = []
         let pastPlaylists = this.state.pastPlaylists;
@@ -236,6 +241,7 @@ export default class ProfileScreen extends Component {
         return playlists;
     }
 
+    // Renders  3 artist recommendations
     _renderArtistSuggestions() {
         let recommendations = this.state.recommendations;
         if(recommendations.length < 3)

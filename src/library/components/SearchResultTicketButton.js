@@ -5,6 +5,7 @@ import { withNavigation } from 'react-navigation';
 
 import colors from 'res/colors';
 
+// Button component that displays data about a setlist
 class TicketButton extends Component {
     render() {
         const { data } = this.props;
@@ -42,6 +43,7 @@ class TicketButton extends Component {
         );
     }
 
+    // Gets the day part of the date
     _dateDay(date) {
         let day = date.date.substring(0, 2);
         return (
@@ -51,6 +53,7 @@ class TicketButton extends Component {
         );
     }
 
+    // Gets the month part of the date
     _dateMonth(date) {
         let months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN',
                       'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
@@ -63,6 +66,7 @@ class TicketButton extends Component {
         );
     }
 
+    // Gets the year part of the date
     _dateYear(date) {
         let year = date.date.substring(6);
         return (
@@ -72,17 +76,20 @@ class TicketButton extends Component {
         );
     }
 
+    // Returns a location string from the venue's location
     getLocation(data) {
         let city = data.venue.city;
         return city.name + ', ' + city.stateCode + ', ' + city.country.code;
     }
 
+    // Returns the number of songs in the setlist
     getNumSongs(data) {
         let num = 0;
         data.sets.set.forEach((set) => num += set.song.length)
         return num;
     }
 
+    // Navigates to the create playlist screen
     navigateToForm = (data) => {
         this.props.navigation.navigate('CreatePlaylist',
         {
